@@ -18,6 +18,12 @@
   url = "#software"
   weight = 30
 
+[[main]]
+  name = "Talks"
+  url = "#talks"
+  weight = 40
+
+
 # [[main]]
 #   name = "Projects"
 #   url = "#projects"
@@ -26,14 +32,14 @@
 [[main]]
   name = "Posts"
   url = "#posts"
-  weight = 40
+  weight = 50
 
 [[main]]
   name = "CV"
   url = "files/cv.pdf"
-  weight = 50
+  weight = 60
 
 [[main]]
   name = "Contact"
   url = "#contact"
-  weight = 60
+  weight = 70
