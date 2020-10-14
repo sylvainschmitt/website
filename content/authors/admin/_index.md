@@ -1,6 +1,6 @@
 ---
 # Display name
-title: Nelson Bighetti
+title: Sylvain Schmitt  
 
 # Username (this should match the folder name)
 authors:
@@ -10,32 +10,26 @@ authors:
 superuser: true
 
 # Role/position
-role: Professor of Artificial Intelligence
+role: PhD student in Ecology and Evolution
 
 # Organizations/Affiliations
 organizations:
-- name: Stanford University
-  url: ""
+- name: Univ. Bordeaux, INRAE, BIOGECO
+  url: "https://www6.bordeaux-aquitaine.inrae.fr/biogeco"
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+bio: I am a PhD student in evolution and ecology working on tropical trees.
 
 interests:
-- Artificial Intelligence
-- Computational Linguistics
-- Information Retrieval
+- Ecology
+- Evolutionary biology
+- Bioinformatics
 
 education:
   courses:
-  - course: PhD in Artificial Intelligence
-    institution: Stanford University
-    year: 2012
-  - course: MEng in Artificial Intelligence
-    institution: Massachusetts Institute of Technology
-    year: 2009
-  - course: BSc in Artificial Intelligence
-    institution: Massachusetts Institute of Technology
-    year: 2008
+  - course: Msc / Engineer in Biodiversity, Ecology and Evolution
+    institution: AgroParisTech, Univ. Montpellier
+    year: 2017
 
 # Social/Academic Networking
 # For available icons, see: https://sourcethemes.com/academic/docs/page-builder/#icons
@@ -44,35 +38,38 @@ education:
 social:
 - icon: envelope
   icon_pack: fas
-  link: '#contact'  # For a direct email link, use "mailto:test@example.org".
-- icon: twitter
-  icon_pack: fab
-  link: https://twitter.com/GeorgeCushen
+  link: '#contact'  # For a direct email link, use "mailto:sylvain.m.schmitt@gmail.com".
 - icon: google-scholar
   icon_pack: ai
-  link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
+  link: https://scholar.google.com/citations?user=sM0Z2yIAAAAJ&hl=fr
+- icon: publons
+  icon_pack: ai
+  link: https://publons.com/researcher/3675037/sylvain-schmitt/
 - icon: github
   icon_pack: fab
-  link: https://github.com/gcushen
+  link: https://github.com/sylvainschmitt
+- icon: google-scholar
+  icon_pack: ai
+  link: https://scholar.google.com/citations?user=4iLBmbUAAAAJ
+- icon: cv
+  icon_pack: ai
+  link: files/cv.pdf
 # Link to a PDF of your resume/CV from the About widget.
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
-# - icon: cv
-#   icon_pack: ai
-#   link: files/cv.pdf
+
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
-email: ""
+email: "sylvain.m.schmitt@gmail.com"
 
 # Highlight the author in author lists? (true/false)
-highlight_name: false
+highlight_name: true
 
 # Organizational groups that you belong to (for People widget)
 #   Set this to `[]` or comment out if you are not using People widget.
-user_groups:
-- Researchers
-- Visitors
+# user_groups:
+# - Researchers
+# - Visitors
 ---
 
-Nelson Bighetti is a professor of artificial intelligence at the Stanford AI Lab. His research interests include distributed robotics, mobile computing and programmable matter. He leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+I am a PhD student in evolution and ecology working on tropical trees. More especially, the main objective of my PhD thesis is to further explore the genotype-environment interactions in shaping the intraspecific trait variability of tropical tree species, and derive its impact on the origin and maintenance of biodiversity.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.

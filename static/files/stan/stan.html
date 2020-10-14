@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Sylvain SCHMITT" />
+  <title>Introduction to bayesian modelling with stan</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="stan_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="stan_files/reveal.js-3.3.0.1/css/theme/blood.css" id="theme">
+
+<style type="text/css">
+.reveal section img {
+  background: rgba(255, 255, 255, 0.85);
+}
+</style>
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link href="stan_files/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+    <script src="stan_files/htmlwidgets-1.0/htmlwidgets.js"></script>
+    <script src="stan_files/jquery-1.12.4/jquery.min.js"></script>
+    <link href="stan_files/leaflet-0.7.7/leaflet.css" rel="stylesheet" />
+    <script src="stan_files/leaflet-0.7.7/leaflet.js"></script>
+    <link href="stan_files/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+    <link href="stan_files/leaflet-label-0.2.2/leaflet.label.css" rel="stylesheet" />
+    <script src="stan_files/leaflet-label-0.2.2/leaflet.label.js"></script>
+    <script src="stan_files/Proj4Leaflet-0.7.2/proj4-compressed.js"></script>
+    <script src="stan_files/Proj4Leaflet-0.7.2/proj4leaflet.js"></script>
+    <script src="stan_files/leaflet-binding-1.1.0/leaflet.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Introduction to bayesian modelling with stan</h1>
+    <h2 class="author">Sylvain SCHMITT</h2>
+    <h3 class="date">March 1, 2018, ECOFOG</h3>
+</section>
+
+<section><section id="introduction" class="titleslide slide level1"><h1>Introduction</h1></section><section id="why-bayes" class="slide level2">
+<h2>Why Bayes</h2>
+<ul>
+<li>Express your <strong>beliefs/expertise</strong> about parameters</li>
+<li>Properly account for <strong>uncertainty</strong></li>
+<li>Handle <strong>small data</strong></li>
+<li><strong>Any form</strong> of model</li>
+</ul>
+</section><section id="bayes-theorem" class="slide level2">
+<h2>Bayes theorem</h2>
+<p><span class="math display">\[p(\theta|y) = \frac{p(\theta)*p(y|\theta)}{p(y)}\]</span></p>
+<ul>
+<li><span class="math inline">\(p(\theta)\)</span> represents what someone <strong>believes</strong> about <span class="math inline">\(\theta\)</span> <strong>prior</strong> to observing <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(p(\theta|y)\)</span> represents what someone <strong>believes</strong> about <span class="math inline">\(\theta\)</span> <strong>after</strong> observing <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(p(y|\theta)\)</span> is the <strong>likelihood</strong> function</li>
+<li><span class="math inline">\(p(y)\)</span> is the <strong>marginal likelihood</strong> equal to <span class="math inline">\(\int p(y|\theta)*p(\theta)*d\theta\)</span></li>
+</ul>
+</section><section id="what-is-stan" class="slide level2">
+<h2>What is <code>stan</code></h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">What</th>
+<th style="text-align: left;">Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">C++ Math/Stats Library</td>
+<td style="text-align: left;">Mathematical specification of models</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Imperative Model Specification Language</td>
+<td style="text-align: left;">Fast and simple way to specify complex models</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Algorithm Toolbox</td>
+<td style="text-align: left;">Fit with full Bayes, approximate Bayes,</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">optimization (HMC NUTS, ADVI, L-BFGS)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Interfaces (Command Line, R, Python, Julia, Matlab, Stata, …)</td>
+<td style="text-align: left;">Work in the language of your choice</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Interpretation Tools</td>
+<td style="text-align: left;">Model critisism, algorithm evaluation</td>
+</tr>
+</tbody>
+</table>
+</section><section id="outlines" class="slide level2">
+<h2>Outlines</h2>
+<ol type="1">
+<li><code>stan</code> &amp; friends</li>
+<li>Coin example</li>
+<li>Leaf lifespan example</li>
+<li>Growth example</li>
+<li>Gaps &amp; growth example</li>
+<li>What about <code>greta</code></li>
+</ol>
+</section></section>
+<section><section id="stan-friends" class="titleslide slide level1"><h1><code>stan</code> &amp; friends</h1></section><section id="stan-program" class="slide level2">
+<h2><code>stan</code> program</h2>
+<pre class="stan"><code>data {                      // Data block
+  int&lt;lower=1&gt; N;           // Sample size
+  int&lt;lower=1&gt; K;           // Dimension of model matrix
+  matrix[N, K] X;           // Model Matrix
+  vector[N] y;              // Target variable
+}
+transformed data {          // Transformed data block.
+} 
+parameters {                // Parameters block
+  vector[K] beta;           // Coefficient vector
+  real&lt;lower=0&gt; sigma;      // Error scale
+}
+transformed parameters {    // Transformed parameters block.
+} 
+model {                     // Model block
+  vector[N] mu;
+  mu = X * beta;            // Creation of linear predictor
+  beta ~ normal(0, 10);     // priors
+  sigma ~ cauchy(0, 5);     
+  y ~ normal(mu, sigma);    // likelihood
+}
+generated quantities {      // Generated quantities block. 
+}</code></pre>
+</section><section id="data-in-stan" class="slide level2">
+<h2>Data in <code>stan</code></h2>
+<pre class="stan"><code>data {                       // Data block
+  int&lt;lower=1&gt; N ;           // Sample size
+  int&lt;lower=1&gt; K ;           // Dimension of model matrix
+  matrix[N, K] X ;           // Model Matrix
+  vector[N] y ;              // Target variable
+}</code></pre>
+<ul>
+<li>Define <code>type&lt;bounds&gt;[size] name</code></li>
+<li>Declare first what you need after (e.g. N,K)</li>
+<li>Comment</li>
+</ul>
+</section><section id="transformed-data-in-stan" class="slide level2">
+<h2>Transformed data in <code>stan</code></h2>
+<pre class="stan"><code>transformed data {          // Transformed data block
+  vector[N] logX ;
+  logX = log(X) ;
+}</code></pre>
+<ul>
+<li>log, center, scale, new data…</li>
+<li>Can be done in R</li>
+<li>Can be done directly in model block (if you are not interested with values)</li>
+</ul>
+</section><section id="parameters-in-stan" class="slide level2">
+<h2>Parameters in <code>stan</code></h2>
+<pre class="stan"><code>parameters {                 // Parameters block
+  vector[K] beta ;           // Coefficient vector
+  real&lt;lower=0&gt; sigma ;      // Error scale
+}</code></pre>
+<ul>
+<li>Declaration only</li>
+<li>Prefer splitting <span class="math inline">\(\beta\)</span></li>
+<li>Prior boundaries</li>
+<li>Prior relations <code>real&lt;lower=-beta&gt; alpha</code></li>
+</ul>
+</section><section id="transformed-parameters-in-stan" class="slide level2">
+<h2>Transformed parameters in <code>stan</code></h2>
+<pre class="stan"><code>transformed parameters {    // Transformed parameters block
+  vector[N] mu ;                
+  mu = X * beta ;           // Creation of linear predictor
+} </code></pre>
+<ul>
+<li>Can be done directly in the model block (if you are not interested with values)</li>
+</ul>
+</section><section id="model-in-stan" class="slide level2">
+<h2>Model in <code>stan</code></h2>
+<pre class="stan"><code>model {                      // Model block
+  beta ~ normal(0, 10) ;     // priors
+  sigma ~ cauchy(0, 5) ;     
+  y ~ normal(mu, sigma) ;    // likelihood
+  log(y) ~ normal(X * beta, sigma) ;
+}</code></pre>
+<ul>
+<li>Priors definition</li>
+<li>Likelihood defintion</li>
+<li>Directly define data and parameter transformation here (if you are not interested with values)</li>
+</ul>
+</section><section id="generated-quantities-in-stan" class="slide level2">
+<h2>Generated quantities in <code>stan</code></h2>
+<pre class="stan"><code>generated quantities {
+  vector[N] yhat ;                // linear predictor
+  yhat = X * beta ;
+}</code></pre>
+<ul>
+<li>Anything you want to extract/calculate can be defined here</li>
+<li>Predicted values (yhat), Residual Sum of Squares (RSS), total RSS, <span class="math inline">\(R^2\)</span>…</li>
+</ul>
+</section><section id="rstan" class="slide level2">
+<h2><code>rstan</code></h2>
+<blockquote>
+<p><code>rstan</code> is the R interface to the <code>stan</code> C++ package</p>
+</blockquote>
+<ul>
+<li>model compilation</li>
+<li>model sampling</li>
+<li>sampling extraction</li>
+</ul>
+</section><section id="bayesplot" class="slide level2">
+<h2><code>bayesplot</code></h2>
+<blockquote>
+<p><code>bayesplot</code> provides <code>ggplot2</code>-based plotting functions for Bayesian model fits</p>
+</blockquote>
+<ul>
+<li><strong>MCMC:</strong> Visualizations of Markov chain Monte Carlo (MCMC)
+<ul>
+<li>chain traces, parameter pairs, parameter posteriors, combos…</li>
+</ul></li>
+<li><strong>PPC:</strong> Graphical posterior predictive checks (PPCs).</li>
+<li>see <code>broom::tidy_mcmc</code> for tables</li>
+</ul>
+</section><section id="shinystan" class="slide level2">
+<h2><code>shinystan</code></h2>
+<blockquote>
+<p><code>ShinyStan</code> provide a graphical user interface (GUI) to analyze <code>rstan</code> outputs interactivelly</p>
+</blockquote>
+<p><img src="stan_data/shinystan.png" width="1838" /></p>
+</section><section id="rstanarm" class="slide level2">
+<h2><code>rstanarm</code></h2>
+<blockquote>
+<p><code>rstanarm</code> allows models specification using customary R modeling syntax</p>
+</blockquote>
+<ul>
+<li>Use formula and data frames</li>
+<li>E.g. <code>stan_lm(y ~ x, data)</code></li>
+<li>Support <code>lm</code>, <code>aov</code>, <code>glm</code>, <code>glmer</code>, <code>gamm4</code>, <code>polr</code>, <code>betareg</code>, <code>clogit</code></li>
+</ul>
+</section><section id="brms" class="slide level2">
+<h2><code>brms</code></h2>
+<blockquote>
+<p>Bayesian generalized (non-)linear multilevel models using <code>stan</code> with extended version of the syntax applied in <code>lme4</code></p>
+</blockquote>
+<ul>
+<li>Use formula and data frames</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">brm</span>(<span class="dt">formula =</span> time <span class="op">|</span><span class="st"> </span><span class="kw">cens</span>(censored) <span class="op">~</span><span class="st"> </span>age <span class="op">*</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>disease
+    <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>age<span class="op">|</span>patient),
+    <span class="dt">data =</span> kidney, <span class="dt">family =</span> <span class="kw">lognormal</span>(),
+    <span class="dt">prior =</span> <span class="kw">c</span>(<span class="kw">set_prior</span>(<span class="st">&quot;normal(0,5)&quot;</span>, <span class="dt">class =</span> <span class="st">&quot;b&quot;</span>),
+              <span class="kw">set_prior</span>(<span class="st">&quot;cauchy(0,2)&quot;</span>, <span class="dt">class =</span> <span class="st">&quot;sd&quot;</span>),
+              <span class="kw">set_prior</span>(<span class="st">&quot;lkj(2)&quot;</span>, <span class="dt">class =</span> <span class="st">&quot;cor&quot;</span>)),
+    <span class="dt">warmup =</span> <span class="dv">1000</span>, <span class="dt">iter =</span> <span class="dv">2000</span>, <span class="dt">chains =</span> <span class="dv">4</span>,
+    <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.95</span>))</code></pre></div>
+</section><section id="loo" class="slide level2">
+<h2><code>loo</code></h2>
+<blockquote>
+<p>Estimate model accuracy and model comparison</p>
+</blockquote>
+<ul>
+<li>Leave-one-out cross-validation (LOO)</li>
+<li>Widely applicable information criterion (WAIC)</li>
+<li>Vehtari, A., Gelman, A., and Gabry, J. (2016a). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. Statistics and Computing. Advance online publication. <a href="doi:10.1007/s11222-016-9696-4" class="uri">doi:10.1007/s11222-016-9696-4</a></li>
+</ul>
+</section></section>
+<section><section id="coin-example---bernoulli-model" class="titleslide slide level1"><h1>Coin example - Bernoulli model</h1></section><section id="example" class="slide level2">
+<h2>Example</h2>
+<p>5 coin throw</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="co"># Observations</span></code></pre></div>
+<p><span class="math inline">\(\theta\)</span> approximation:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(y) <span class="op">/</span><span class="st"> </span><span class="kw">length</span>(y)</code></pre></div>
+<pre><code>## [1] 0.6</code></pre>
+</section><section id="back-to-maths" class="slide level2">
+<h2>Back to maths</h2>
+<p><span class="math display">\[p(y|\theta)=\prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}\]</span> <span class="math display">\[log(p(y|\theta))=\sum_{n=1}^N{y_n}*log(\theta) + \sum_{n=1}^N(1-y_n)*log(1-\theta)\]</span></p>
+</section><section id="roule-sous-les-aisselles---likelihood" class="slide level2">
+<h2>“Roulé sous les aisselles” - Likelihood</h2>
+<p><span class="math display">\[p(y|\theta)=\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">log_likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(theta, y) 
+  <span class="kw">sum</span>(<span class="kw">log</span>(theta)<span class="op">*</span>y <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(<span class="dv">1</span><span class="op">-</span>theta)<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span>y))
+
+log_likelihood_dbinom &lt;-<span class="st"> </span><span class="cf">function</span>(theta, y) 
+  <span class="kw">sum</span>(<span class="kw">dbinom</span>(y, <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">prob =</span> theta, <span class="dt">log =</span> T))
+
+<span class="kw">exp</span>(<span class="kw">log_likelihood</span>(<span class="fl">0.1</span>, y))</code></pre></div>
+<pre><code>## [1] 0.00081</code></pre>
+</section><section id="roule-sous-les-aisselles---posterior-sampling" class="slide level2">
+<h2>“Roulé sous les aisselles” - Posterior sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># theta grid</span>
+theta &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="fl">0.001</span>, <span class="fl">0.999</span>, <span class="dt">length.out =</span> <span class="dv">250</span>)
+
+<span class="co"># p(theta|y)</span>
+log_posterior &lt;-<span class="st"> </span><span class="kw">sapply</span>(theta, <span class="cf">function</span>(x) <span class="kw">log_likelihood</span>(x, y))
+posterior &lt;-<span class="st"> </span><span class="kw">exp</span>(log_posterior)
+
+<span class="co"># posterior sampling</span>
+posterior_draws &lt;-<span class="st"> </span><span class="kw">sample</span>(theta, <span class="dt">size =</span> <span class="fl">1e5</span>, 
+                          <span class="dt">replace =</span> <span class="ot">TRUE</span>, <span class="dt">prob =</span> posterior)</code></pre></div>
+</section><section id="roule-sous-les-aisselles---posterior-plot" class="slide level2">
+<h2>“Roulé sous les aisselles” - Posterior plot</h2>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-16-1.png" /><!-- --></p>
+</section><section id="stan---model" class="slide level2">
+<h2><code>stan</code> - Model</h2>
+<p><span class="math display">\[y \sim \mathcal{B}(\theta)\]</span></p>
+</section><section id="stan---model-1" class="slide level2">
+<h2><code>stan</code> - Model</h2>
+<p><span class="math display">\[y \sim \mathcal{B}(\theta)\]</span></p>
+<pre class="stan"><code>data {
+  int&lt;lower=1&gt;  N; // Number of observations
+  int&lt;lower=0, upper=1&gt; y[N]; // Observations
+}
+parameters {
+  real&lt;lower=0, upper=1&gt; theta; // Parameter
+}
+model {
+  theta ~ uniform(0, 1); // theta prior
+  y ~ bernoulli(theta); // Likelihood
+} // empty line at the end (C++)
+</code></pre>
+</section><section id="stan---sampling" class="slide level2">
+<h2><code>stan</code> - Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">N =</span> <span class="kw">length</span>(y), <span class="co"># Number of observation</span>
+  <span class="dt">y =</span> y <span class="co"># Observations</span>
+)
+
+fit &lt;-<span class="st"> </span><span class="kw">stan</span>(<span class="st">&quot;./stan_models/coin_model.stan&quot;</span>, <span class="dt">data =</span> data)</code></pre></div>
+<pre><code>## In file included from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config.hpp:39:0,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/math/tools/config.hpp:13,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+##                  from file2b136728e429.cpp:8:
+## /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: &quot;BOOST_NO_CXX11_RVALUE_REFERENCES&quot; redefined
+##  #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+##  ^
+## &lt;command-line&gt;:0:0: note: this is the location of the previous definition
+## 
+## SAMPLING FOR MODEL &#39;coin_model&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 7e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.07 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.008072 seconds (Warm-up)
+##                0.008299 seconds (Sampling)
+##                0.016371 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;coin_model&#39; NOW (CHAIN 2).
+## 
+## Gradient evaluation took 3e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.03 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.008069 seconds (Warm-up)
+##                0.007297 seconds (Sampling)
+##                0.015366 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;coin_model&#39; NOW (CHAIN 3).
+## 
+## Gradient evaluation took 3e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.03 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.008449 seconds (Warm-up)
+##                0.007364 seconds (Sampling)
+##                0.015813 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;coin_model&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 4e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.04 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.008139 seconds (Warm-up)
+##                0.007409 seconds (Sampling)
+##                0.015548 seconds (Total)</code></pre>
+</section><section id="stan---sampling-1" class="slide level2">
+<h2><code>stan</code> - Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit</code></pre></div>
+<pre><code>## Inference for Stan model: coin_model.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##        mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat
+## theta  0.57    0.00 0.17  0.22  0.45  0.58  0.70  0.88  1761    1
+## lp__  -5.31    0.02 0.77 -7.49 -5.48 -5.02 -4.83 -4.78  1926    1
+## 
+## Samples were drawn using NUTS(diag_e) at Mon Feb 26 19:08:09 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).</code></pre>
+</section><section id="stan---posterior" class="slide level2">
+<h2><code>stan</code> - Posterior</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_areas</span>(<span class="kw">as.array</span>(fit), <span class="dt">pars =</span> <span class="st">&quot;theta&quot;</span>, <span class="dt">prob =</span> <span class="fl">0.8</span>)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-20-1.png" /><!-- --></p>
+</section></section>
+<section><section id="leaf-lifespan-example---linear-regression" class="titleslide slide level1"><h1>Leaf lifespan example - Linear regression</h1></section><section id="glopnet-data" class="slide level2">
+<h2>Glopnet data</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">LES &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./stan_data/GLOPNET.csv&quot;</span>, <span class="dt">skip =</span> <span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(BIOME <span class="op">==</span><span class="st"> &quot;TROP_RF&quot;</span>, GF <span class="op">==</span><span class="st"> &quot;T&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(Dataset, Species, log.LL, log.LMA) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">na.omit</span>()
+
+<span class="kw">kable</span>(LES[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,])</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: left;">Dataset</th>
+<th style="text-align: left;">Species</th>
+<th style="text-align: right;">log.LL</th>
+<th style="text-align: right;">log.LMA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>125</td>
+<td style="text-align: left;">Kitajima_Panama</td>
+<td style="text-align: left;">Anacardium excelsum</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">1.92</td>
+</tr>
+<tr class="even">
+<td>126</td>
+<td style="text-align: left;">Kitajima_Panama</td>
+<td style="text-align: left;">Luehea seemannii</td>
+<td style="text-align: right;">0.80</td>
+<td style="text-align: right;">2.14</td>
+</tr>
+<tr class="odd">
+<td>127</td>
+<td style="text-align: left;">Kitajima_Panama</td>
+<td style="text-align: left;">Castilla elastica</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1.89</td>
+</tr>
+<tr class="even">
+<td>128</td>
+<td style="text-align: left;">Kitajima_Panama</td>
+<td style="text-align: left;">Antirrhoea trichantha</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1.97</td>
+</tr>
+<tr class="odd">
+<td>129</td>
+<td style="text-align: left;">Kitajima_Panama</td>
+<td style="text-align: left;">Urera caracasana</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">1.83</td>
+</tr>
+</tbody>
+</table>
+</section><section id="glopnet-data-1" class="slide level2">
+<h2>Glopnet data</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">LES <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(log.LMA, log.LL, <span class="dt">col =</span> Dataset)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;logarithm of Leaf Mass per Area (LMA)&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;logarithm of Leaf Lifespan (LL)&quot;</span>)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-23-1.png" /><!-- --></p>
+</section><section id="model" class="slide level2">
+<h2>Model</h2>
+<p><span class="math display">\[log.LL \sim \mathcal{N}(\alpha + \beta*log.LMA, \sigma) \]</span></p>
+</section><section id="model-1" class="slide level2">
+<h2>Model</h2>
+<p><span class="math display">\[log.LL \sim \mathcal{N}(\alpha + \beta*log.LMA, \sigma) \]</span></p>
+<pre class="stan"><code>data {
+  int&lt;lower=1&gt;  N; // Number of observations
+  vector&lt;lower=0&gt;[N] logLMA; // Leaf Mass per Area
+  vector&lt;lower=0&gt;[N] logLL; // Leaf Lifespan
+}
+parameters {
+  real alpha; // intercept
+  real beta; // LMA parameter
+  real&lt;lower=0, upper=10&gt; sigma; // variance
+}
+model {
+  alpha ~ gamma(10^-2, 10^-2); // alpha prior
+  beta ~ gamma(10^-2, 10^-2); // beta prior
+  sigma ~ uniform(0, 10); // sigma prior
+  logLL ~ normal(alpha + beta*logLMA, sigma); // Likelihood
+} // empty line at the end (C++)
+</code></pre>
+</section><section id="sampling" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">N =</span> <span class="kw">dim</span>(LES)[<span class="dv">1</span>],
+  <span class="dt">logLMA =</span> LES<span class="op">$</span>log.LMA,
+  <span class="dt">logLL =</span> LES<span class="op">$</span>log.LL
+)
+
+fit1 &lt;-<span class="st"> </span><span class="kw">stan</span>(<span class="st">&quot;./stan_models/LL_model.stan&quot;</span>, <span class="dt">data =</span> data)</code></pre></div>
+<pre><code>## In file included from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config.hpp:39:0,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/math/tools/config.hpp:13,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+##                  from file2b135c40391b.cpp:8:
+## /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: &quot;BOOST_NO_CXX11_RVALUE_REFERENCES&quot; redefined
+##  #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+##  ^
+## &lt;command-line&gt;:0:0: note: this is the location of the previous definition
+## 
+## SAMPLING FOR MODEL &#39;LL_model&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 2e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.05304 seconds (Warm-up)
+##                0.02981 seconds (Sampling)
+##                0.08285 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;LL_model&#39; NOW (CHAIN 2).
+## 
+## Gradient evaluation took 6e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.06 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.05788 seconds (Warm-up)
+##                0.81527 seconds (Sampling)
+##                0.87315 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;LL_model&#39; NOW (CHAIN 3).
+## Rejecting initial value:
+##   Log probability evaluates to log(0), i.e. negative infinity.
+##   Stan can&#39;t start sampling from this initial value.
+## Rejecting initial value:
+##   Log probability evaluates to log(0), i.e. negative infinity.
+##   Stan can&#39;t start sampling from this initial value.
+## 
+## Gradient evaluation took 6e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.06 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.049969 seconds (Warm-up)
+##                0.390962 seconds (Sampling)
+##                0.440931 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;LL_model&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 4.8e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.48 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.052266 seconds (Warm-up)
+##                1.721 seconds (Sampling)
+##                1.77326 seconds (Total)</code></pre>
+</section><section id="sampling-1" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit1</code></pre></div>
+<pre><code>## Inference for Stan model: LL_model.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##        mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat
+## alpha  0.02    0.01 0.05  0.00  0.00  0.00  0.00  0.15    14 1.22
+## beta   0.56    0.01 0.03  0.49  0.55  0.56  0.58  0.62    10 1.30
+## sigma  0.37    0.02 0.03  0.30  0.37  0.37  0.39  0.41     3 2.15
+## lp__  34.22    2.19 3.90 27.61 31.38 33.61 37.10 42.83     3 1.65
+## 
+## Samples were drawn using NUTS(diag_e) at Mon Feb 26 19:09:02 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).</code></pre>
+</section><section id="trace-of-chains" class="slide level2">
+<h2>Trace of chains</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_trace</span>(<span class="kw">as.array</span>(fit1),
+           <span class="dt">facet_args =</span> <span class="kw">list</span>(<span class="dt">labeller =</span> label_parsed))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-27-1.png" /><!-- --></p>
+</section><section id="pairs" class="slide level2">
+<h2>Pairs</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_pairs</span>(<span class="kw">as.array</span>(fit1), <span class="dt">pars =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-28-1.png" /><!-- --></p>
+</section><section id="model-2" class="slide level2">
+<h2>Model 2</h2>
+<p><span class="math display">\[log.LL \sim \mathcal{N}(\beta*log.LMA, \sigma) \]</span></p>
+</section><section id="model-2-1" class="slide level2">
+<h2>Model 2</h2>
+<p><span class="math display">\[log.LL \sim \mathcal{N}(\beta*log.LMA, \sigma) \]</span></p>
+<pre class="stan"><code>data {
+  int&lt;lower=1&gt;  N; // Number of observations
+  vector&lt;lower=0&gt;[N] logLMA; // Leaf Mass per Area
+  vector&lt;lower=0&gt;[N] logLL; // Leaf Lifespan
+}
+parameters {
+  real beta; // LMA parameter
+  real&lt;lower=0, upper=10&gt; sigma; // variance
+}
+model {
+  beta ~ gamma(10^-2, 10^-2); // beta prior
+  logLL ~ normal(beta*logLMA, sigma); // Likelihood
+} // empty line at the end (C++)
+</code></pre>
+</section><section id="sampling-2" class="slide level2">
+<h2>Sampling 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit2 &lt;-<span class="st"> </span><span class="kw">stan</span>(<span class="st">&quot;./stan_models/LL2_model.stan&quot;</span>, <span class="dt">data =</span> data)</code></pre></div>
+<pre><code>## In file included from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config.hpp:39:0,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/math/tools/config.hpp:13,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+##                  from file2b131df5a502.cpp:8:
+## /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: &quot;BOOST_NO_CXX11_RVALUE_REFERENCES&quot; redefined
+##  #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+##  ^
+## &lt;command-line&gt;:0:0: note: this is the location of the previous definition
+## 
+## SAMPLING FOR MODEL &#39;LL2_model&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 1.2e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.12 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.019178 seconds (Warm-up)
+##                0.021125 seconds (Sampling)
+##                0.040303 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;LL2_model&#39; NOW (CHAIN 2).
+## Rejecting initial value:
+##   Log probability evaluates to log(0), i.e. negative infinity.
+##   Stan can&#39;t start sampling from this initial value.
+## Rejecting initial value:
+##   Log probability evaluates to log(0), i.e. negative infinity.
+##   Stan can&#39;t start sampling from this initial value.
+## 
+## Gradient evaluation took 6e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.06 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.019249 seconds (Warm-up)
+##                0.021573 seconds (Sampling)
+##                0.040822 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;LL2_model&#39; NOW (CHAIN 3).
+## 
+## Gradient evaluation took 6e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.06 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.019302 seconds (Warm-up)
+##                0.017699 seconds (Sampling)
+##                0.037001 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;LL2_model&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 7e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.07 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.018866 seconds (Warm-up)
+##                0.018204 seconds (Sampling)
+##                0.03707 seconds (Total)</code></pre>
+</section><section id="sampling-2-1" class="slide level2">
+<h2>Sampling 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit2</code></pre></div>
+<pre><code>## Inference for Stan model: LL2_model.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##        mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat
+## beta   0.57    0.00 0.02  0.52  0.55  0.57  0.59  0.62  3085    1
+## sigma  0.34    0.00 0.04  0.28  0.31  0.34  0.36  0.43  3013    1
+## lp__  26.47    0.02 1.04 23.69 26.12 26.79 27.18 27.46  1803    1
+## 
+## Samples were drawn using NUTS(diag_e) at Mon Feb 26 19:09:51 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).</code></pre>
+</section><section id="trace-of-chains-2" class="slide level2">
+<h2>Trace of chains 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_trace</span>(<span class="kw">as.array</span>(fit2),
+           <span class="dt">facet_args =</span> <span class="kw">list</span>(<span class="dt">labeller =</span> label_parsed))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-32-1.png" /><!-- --></p>
+</section><section id="pairs-2" class="slide level2">
+<h2>Pairs 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_pairs</span>(<span class="kw">as.array</span>(fit2), <span class="dt">pars =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-33-1.png" /><!-- --></p>
+</section><section id="posteriors-2" class="slide level2">
+<h2>Posteriors 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_areas</span>(<span class="kw">as.array</span>(fit2), <span class="dt">prob =</span> <span class="fl">0.8</span>,
+           <span class="dt">pars =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-34-1.png" /><!-- --></p>
+</section><section id="predictions-2" class="slide level2">
+<h2>Predictions 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>)
+pars_opt &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(fit2)[<span class="kw">which.max</span>(<span class="kw">as.matrix</span>(fit2)[,<span class="st">&#39;lp__&#39;</span>]), pars]
+predict &lt;-<span class="st"> </span><span class="cf">function</span>(logLMA, pars_val)
+  <span class="kw">rnorm</span>(<span class="dv">1000</span>, <span class="dt">mean =</span> pars_val[<span class="dv">1</span>]<span class="op">*</span>logLMA, <span class="dt">sd =</span> pars_val[<span class="dv">2</span>])
+predictions &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">seq_len</span>(data<span class="op">$</span>N), <span class="cf">function</span>(i)
+  <span class="kw">apply</span>(<span class="kw">as.matrix</span>(fit2)[,pars], <span class="dv">1</span>, <span class="cf">function</span>(p)
+    <span class="kw">predict</span>(LES<span class="op">$</span>log.LMA[i], p)))
+predictions &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">t</span>(<span class="kw">apply</span>(predictions, <span class="dv">2</span>, <span class="cf">function</span>(x) 
+  <span class="kw">quantile</span>(x, <span class="dt">probs =</span> <span class="kw">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)))))
+predictions<span class="op">$</span>mean &lt;-<span class="st"> </span>pars_opt[<span class="st">&quot;beta&quot;</span>]<span class="op">*</span>LES<span class="op">$</span>log.LMA
+predictions<span class="op">$</span>logLL &lt;-<span class="st"> </span>LES<span class="op">$</span>log.LL
+predictions<span class="op">$</span>logLMA &lt;-<span class="st"> </span>LES<span class="op">$</span>log.LMA</code></pre></div>
+</section><section id="predictions-2-1" class="slide level2">
+<h2>Predictions 2</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(predictions, <span class="kw">aes</span>(logLMA, logLL)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> X5., <span class="dt">ymax =</span> X95.),
+              <span class="dt">color =</span> <span class="st">&quot;grey&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> mean)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>()</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-36-1.png" /><!-- --></p>
+</section><section id="shinystan-1" class="slide level2">
+<h2><code>shinystan</code></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">launch_shinystan</span>(fit2)</code></pre></div>
+</section><section id="rstanarm-1" class="slide level2">
+<h2><code>rstanarm</code></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_arm &lt;-<span class="st"> </span><span class="kw">stan_lm</span>(log.LL <span class="op">~</span><span class="st"> </span>log.LMA, <span class="dt">data =</span> LES, <span class="dt">prior =</span> <span class="ot">NULL</span>)</code></pre></div>
+<pre><code>## 
+## SAMPLING FOR MODEL &#39;lm&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 1.7e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.17 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.173579 seconds (Warm-up)
+##                0.154639 seconds (Sampling)
+##                0.328218 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;lm&#39; NOW (CHAIN 2).
+## 
+## Gradient evaluation took 1e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.1 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.159097 seconds (Warm-up)
+##                0.154305 seconds (Sampling)
+##                0.313402 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;lm&#39; NOW (CHAIN 3).
+## 
+## Gradient evaluation took 1e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.1 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.159864 seconds (Warm-up)
+##                0.157717 seconds (Sampling)
+##                0.317581 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;lm&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 9e-06 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.09 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.162648 seconds (Warm-up)
+##                0.202872 seconds (Sampling)
+##                0.36552 seconds (Total)</code></pre>
+</section><section id="rstanarm-2" class="slide level2">
+<h2><code>rstanarm</code></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_arm</code></pre></div>
+<pre><code>## stan_lm
+##  family:       gaussian [identity]
+##  formula:      log.LL ~ log.LMA
+##  observations: 46
+##  predictors:   2
+## ------
+##               Median MAD_SD
+## (Intercept)   -1.5    0.5  
+## log.LMA        1.3    0.3  
+## sigma          0.3    0.0  
+## log-fit_ratio  0.1    0.1  
+## R2             0.3    0.1  
+## 
+## Sample avg. posterior predictive distribution of y:
+##          Median MAD_SD
+## mean_PPD 1.1    0.1   
+## 
+## ------
+## For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</code></pre>
+</section><section id="brms-1" class="slide level2">
+<h2><code>brms</code></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_brms &lt;-<span class="st"> </span><span class="kw">brm</span>(<span class="dt">formula =</span> log.LL <span class="op">~</span><span class="st"> </span>log.LMA<span class="op">|</span>Dataset, <span class="dt">data =</span> LES)</code></pre></div>
+<pre><code>## Compiling the C++ model</code></pre>
+<pre><code>## Start sampling</code></pre>
+<pre><code>## 
+## SAMPLING FOR MODEL &#39;gaussian brms-model&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 2.6e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 3.29407 seconds (Warm-up)
+##                2.22105 seconds (Sampling)
+##                5.51512 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;gaussian brms-model&#39; NOW (CHAIN 2).
+## 
+## Gradient evaluation took 1.6e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 2.98008 seconds (Warm-up)
+##                2.58215 seconds (Sampling)
+##                5.56223 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;gaussian brms-model&#39; NOW (CHAIN 3).
+## 
+## Gradient evaluation took 1.6e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 2.87837 seconds (Warm-up)
+##                2.47443 seconds (Sampling)
+##                5.3528 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;gaussian brms-model&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 1.6e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 2.91684 seconds (Warm-up)
+##                2.91756 seconds (Sampling)
+##                5.8344 seconds (Total)</code></pre>
+<pre><code>## Warning: There were 165 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See
+## http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+<pre><code>## Warning: There were 1 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
+## http://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded</code></pre>
+<pre><code>## Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+</section><section id="brms-2" class="slide level2">
+<h2><code>brms</code></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_brms</code></pre></div>
+<pre><code>## Warning: There were 165 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help.
+## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</code></pre>
+<pre><code>##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: log.LL ~ log.LMA | Dataset 
+##    Data: LES (Number of observations: 46) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1; 
+##          total post-warmup samples = 4000
+##     ICs: LOO = NA; WAIC = NA; R2 = NA
+##  
+## Group-Level Effects: 
+## ~Dataset (Number of levels: 4) 
+##                        Estimate Est.Error l-95% CI u-95% CI Eff.Sample
+## sd(Intercept)              3.14      1.59     1.30     7.09        876
+## sd(log.LMA)                1.55      0.70     0.71     3.34       1102
+## cor(Intercept,log.LMA)    -0.82      0.26    -1.00    -0.01        721
+##                        Rhat
+## sd(Intercept)          1.01
+## sd(log.LMA)            1.00
+## cor(Intercept,log.LMA) 1.01
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## Intercept     0.82      0.92    -1.44     2.52        602 1.00
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Eff.Sample Rhat
+## sigma     0.22      0.03     0.17     0.27       2160 1.00
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Eff.Sample 
+## is a crude measure of effective sample size, and Rhat is the potential 
+## scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</section></section>
+<section><section id="growth-example" class="titleslide slide level1"><h1>Growth example</h1></section><section id="data" class="slide level2">
+<h2>Data</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">trees &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;./stan_data/Angelique_logaccr.csv&quot;</span>, <span class="dt">header =</span> T, <span class="dt">dec =</span> <span class="st">&quot;.&quot;</span>)
+data &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">N =</span> <span class="kw">dim</span>(trees)[<span class="dv">1</span>], <span class="co"># Nb of trees</span>
+  <span class="dt">growth =</span> trees<span class="op">$</span>Y, <span class="co"># growth vector</span>
+  <span class="dt">dbh =</span> trees<span class="op">$</span>X <span class="co"># dbh vector</span>
+)
+<span class="kw">ggplot</span>(trees, <span class="kw">aes</span>(X, Y)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>()</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-43-1.png" /><!-- --></p>
+</section><section id="model-3" class="slide level2">
+<h2>Model</h2>
+<p><span class="math display">\[log(growth+1) \sim \mathcal{N}(G_{max}*exp(-\frac{1}{2}(log(\frac{dbh}{D_{opt}})/K_s)^2),\sigma)\]</span></p>
+</section><section id="model-4" class="slide level2">
+<h2>Model</h2>
+<p><span class="math display">\[log(growth+1) \sim \mathcal{N}(G_{max}*exp(-\frac{1}{2}(log(\frac{dbh}{D_{opt}})/K_s)^2),\sigma)\]</span></p>
+<pre class="stan"><code>data {
+  int&lt;lower=0&gt; N ; // Nb of trees
+  vector&lt;lower=0&gt;[N] growth ; // growth vector
+  vector&lt;lower=0&gt;[N] dbh ; // dbh vector
+}
+parameters {
+  real Gmax ; // potential growth
+  real&lt;lower=0,upper=200&gt; Dopt ; // optimal diameter
+  real Ks ; // kurtosis
+  real&lt;lower=0,upper=10&gt; sigma ;
+}
+model {
+  for(n in 1:N)
+    log(growth[n]+1) ~ normal(Gmax*exp(-0.5*pow(log(dbh[n]/Dopt)/Ks,2)), sigma) ;
+}</code></pre>
+</section><section id="sampling-3" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">inits &lt;-<span class="st"> </span><span class="cf">function</span>() <span class="kw">list</span>(<span class="dt">Gmax =</span> <span class="dv">1</span>, <span class="dt">Dopt =</span> <span class="dv">100</span>, <span class="dt">Ks =</span> <span class="fl">0.1</span>, <span class="dt">sigma =</span> <span class="dv">2</span>)
+fit &lt;-<span class="st"> </span><span class="kw">stan</span>(<span class="st">&quot;./stan_models/growth_model.stan&quot;</span>, <span class="dt">data =</span> data,
+            <span class="dt">init =</span> inits)</code></pre></div>
+<pre><code>## In file included from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config.hpp:39:0,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/math/tools/config.hpp:13,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+##                  from file2cf6752be4b3.cpp:8:
+## /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: &quot;BOOST_NO_CXX11_RVALUE_REFERENCES&quot; redefined
+##  #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+##  ^
+## &lt;command-line&gt;:0:0: note: this is the location of the previous definition
+## 
+## SAMPLING FOR MODEL &#39;growth_model&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 0.000167 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 1.67 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.925302 seconds (Warm-up)
+##                0.802499 seconds (Sampling)
+##                1.7278 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;growth_model&#39; NOW (CHAIN 2).
+## 
+## Gradient evaluation took 9.9e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.99 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.896908 seconds (Warm-up)
+##                0.693342 seconds (Sampling)
+##                1.59025 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;growth_model&#39; NOW (CHAIN 3).
+## 
+## Gradient evaluation took 9.4e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.94 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.827959 seconds (Warm-up)
+##                0.731771 seconds (Sampling)
+##                1.55973 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;growth_model&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 9.4e-05 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 0.94 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 0.888767 seconds (Warm-up)
+##                0.928759 seconds (Sampling)
+##                1.81753 seconds (Total)</code></pre>
+</section><section id="sampling-4" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Gmax&quot;</span>, <span class="st">&quot;Dopt&quot;</span>, <span class="st">&quot;Ks&quot;</span>, <span class="st">&quot;sigma&quot;</span>)
+<span class="kw">print</span>(fit, <span class="dt">pars =</span> <span class="kw">c</span>(pars, <span class="st">&quot;lp__&quot;</span>))</code></pre></div>
+<pre><code>## Inference for Stan model: growth_model.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
+## Gmax    0.37    0.00 0.01   0.35   0.36   0.37   0.38   0.39  2560    1
+## Dopt  102.55    0.10 5.10  93.82  99.01 102.06 105.57 113.79  2630    1
+## Ks      0.98    0.00 0.08   0.84   0.92   0.97   1.02   1.16  1986    1
+## sigma   0.15    0.00 0.00   0.15   0.15   0.15   0.16   0.16  3462    1
+## lp__  680.15    0.03 1.43 676.53 679.41 680.47 681.22 681.94  1725    1
+## 
+## Samples were drawn using NUTS(diag_e) at Mon Feb 26 19:17:13 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).</code></pre>
+</section><section id="trace-of-chains-1" class="slide level2">
+<h2>Trace of chains</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_trace</span>(<span class="kw">as.array</span>(fit), <span class="dt">pars =</span> <span class="kw">c</span>(pars, <span class="st">&quot;lp__&quot;</span>),
+           <span class="dt">facet_args =</span> <span class="kw">list</span>(<span class="dt">labeller =</span> label_parsed))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-47-1.png" /><!-- --></p>
+</section><section id="pairs-1" class="slide level2">
+<h2>Pairs</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_pairs</span>(<span class="kw">as.array</span>(fit), <span class="dt">pars =</span> pars)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-48-1.png" /><!-- --></p>
+</section><section id="posteriors" class="slide level2">
+<h2>Posteriors</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_areas</span>(<span class="kw">as.array</span>(fit), <span class="dt">prob =</span> <span class="fl">0.8</span>,
+           <span class="dt">pars =</span> pars)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-49-1.png" /><!-- --></p>
+</section><section id="predictions" class="slide level2">
+<h2>Predictions</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars_opt &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(fit)[<span class="kw">which.max</span>(<span class="kw">as.matrix</span>(fit)[,<span class="st">&#39;lp__&#39;</span>]), pars]
+predict &lt;-<span class="st"> </span><span class="cf">function</span>(dbh) 
+  pars_opt[<span class="st">&quot;Gmax&quot;</span>]<span class="op">*</span><span class="kw">exp</span>(<span class="op">-</span><span class="fl">0.5</span><span class="op">*</span>(<span class="kw">log</span>(dbh<span class="op">/</span>pars_opt[<span class="st">&quot;Dopt&quot;</span>])<span class="op">/</span>pars_opt[<span class="st">&quot;Ks&quot;</span>])<span class="op">^</span><span class="dv">2</span>)
+<span class="kw">ggplot</span>(trees, <span class="kw">aes</span>(X, <span class="kw">log</span>(Y<span class="op">+</span><span class="dv">1</span>))) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> <span class="kw">predict</span>(trees<span class="op">$</span>X)), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-50-1.png" /><!-- --></p>
+</section></section>
+<section><section id="gaps-growth-example" class="titleslide slide level1"><h1>Gaps &amp; growth example</h1></section><section id="growth" class="slide level2">
+<h2>Growth</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;./stan_data/dbh_correction.R&quot;</span>)
+trees &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./stan_data/Symphonia_Paracou.csv&quot;</span>, <span class="dt">dec =</span> <span class="st">&#39;,&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(n_parcelle <span class="op">==</span><span class="st"> </span><span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dbh =</span> circonf<span class="op">/</span>pi) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">arrange</span>(campagne) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(idArbre) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dbh_c =</span> <span class="kw">correction</span>(dbh, campagne, code_vivant, code_mesure)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="kw">any</span>(campagne <span class="op">==</span><span class="st"> </span><span class="dv">1988</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="kw">any</span>(campagne <span class="op">==</span><span class="st"> </span><span class="dv">1992</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(campagne <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1988</span>, <span class="dv">1992</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">growth =</span> <span class="kw">diff</span>(dbh_c)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(growth <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(campagne <span class="op">==</span><span class="st"> </span><span class="dv">1988</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(idArbre, Xutm, Yutm, dbh_c, growth)
+<span class="kw">kable</span>(trees[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,])</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">idArbre</th>
+<th style="text-align: right;">Xutm</th>
+<th style="text-align: right;">Yutm</th>
+<th style="text-align: right;">dbh_c</th>
+<th style="text-align: right;">growth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">78250</td>
+<td style="text-align: right;">285042.7</td>
+<td style="text-align: right;">582661.9</td>
+<td style="text-align: right;">22.91831</td>
+<td style="text-align: right;">2.546479</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">78334</td>
+<td style="text-align: right;">285017.0</td>
+<td style="text-align: right;">582769.1</td>
+<td style="text-align: right;">12.89155</td>
+<td style="text-align: right;">6.047888</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">78359</td>
+<td style="text-align: right;">285041.7</td>
+<td style="text-align: right;">582744.5</td>
+<td style="text-align: right;">32.62676</td>
+<td style="text-align: right;">1.432395</td>
+</tr>
+</tbody>
+</table>
+</section><section id="gaps" class="slide level2">
+<h2>Gaps</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">crs &lt;-<span class="st"> &#39;+proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0&#39;</span>
+gaps &lt;-<span class="st"> </span><span class="kw">shapefile</span>(<span class="st">&quot;./stan_data/gaps/Gaps.shp&quot;</span>)
+gaps &lt;-<span class="st"> </span><span class="kw">subset</span>(gaps, Plot <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)
+gaps &lt;-<span class="st"> </span><span class="kw">spTransform</span>(gaps, <span class="dt">CRSobj =</span> crs)
+gaps<span class="op">$</span>area &lt;-<span class="st"> </span><span class="kw">area</span>(gaps)
+treesXY &lt;-<span class="st"> </span>trees
+<span class="kw">coordinates</span>(treesXY) &lt;-<span class="st"> </span><span class="er">~</span>Xutm <span class="op">+</span><span class="st"> </span>Yutm
+<span class="kw">proj4string</span>(treesXY) &lt;-<span class="st"> &#39;+proj=utm +zone=22 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0&#39;</span>
+treesXY &lt;-<span class="st"> </span><span class="kw">spTransform</span>(treesXY, <span class="dt">CRSobj =</span> crs)
+D &lt;-<span class="st"> </span>rgeos<span class="op">::</span><span class="kw">gDistance</span>(<span class="kw">spTransform</span>(gaps, <span class="st">&quot;+proj=utm +zone=22 +units=m&quot;</span>),
+                      <span class="kw">spTransform</span>(treesXY, <span class="st">&quot;+proj=utm +zone=22 +units=m&quot;</span>),
+                      <span class="dt">byid =</span> T)</code></pre></div>
+</section><section id="data-vizualisation" class="slide level2">
+<h2>Data vizualisation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw">raster</span>(<span class="kw">extent</span>(treesXY), <span class="dt">resolution =</span> <span class="dv">10</span><span class="op">^-</span><span class="dv">4</span>, <span class="dt">crs =</span> crs)
+d &lt;-<span class="st"> </span><span class="kw">setValues</span>(d, <span class="dv">0</span>)
+d &lt;-<span class="st">  </span><span class="kw">mask</span>(d, gaps)
+d &lt;-<span class="st"> </span><span class="kw">distance</span>(d)
+trees<span class="op">$</span>dgaps &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">extract</span>(d, treesXY)
+map &lt;-<span class="st"> </span><span class="kw">leaflet</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">addRasterImage</span>(<span class="kw">log</span>(d<span class="op">+</span><span class="dv">1</span>),
+                 <span class="dt">opacity =</span> <span class="fl">0.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">addCircles</span>(<span class="dt">data =</span> treesXY, <span class="dt">radius =</span> <span class="op">~</span>growth, 
+             <span class="dt">label =</span> <span class="kw">paste</span>(<span class="st">&quot;+&quot;</span>, <span class="kw">round</span>(treesXY<span class="op">$</span>growth,<span class="dv">1</span>), <span class="st">&quot;cm&quot;</span>))</code></pre></div>
+</section><section id="data-vizualisation-1" class="slide level2">
+<h2>Data vizualisation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">map</code></pre></div>
+<div id="htmlwidget-17a4a141563f69ca203c" style="width:768px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-17a4a141563f69ca203c">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addRasterImage","args":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAZCAYAAAArK+5dAAADoUlEQVRIiYWWz27bRhjEf0uuuHRoU7Hd1FKtwkAAHRPAORZwniAXP0PyOn2D9tprDvWtt+pa5GDfKiCAEDmyYf2xKFEUaZLbA0NKFKVmTwK0WM3MNzOfxC+//qUPnBhppsSJwcyXSC+lPl3yZJl4J4rWqU/jZ5+2C88tDcC7M8HHvd+5DN7zZ0/zz1Bw98Whf+vg3oe4wwX2aIlstXz2D0NMlZCEJvOJYvRg42FjpJqDZzHOUUjbhYvmkrP9PQB684DL4AMAr4+XTCOb2VHIwUQRKpOkZqKlgWy0VsgeI03XiUFDP3TImUkroW5pzvZtPu79BsBl8B7QBYtrSyOtBFOmpIZEC4EWINeR9eYBkCFpCQpmZKoU5zL48O3u6vM0sokjkyQ2MNIUoTWRq5DP15CtIykzE0wjQW++LB7sDGwAbqyUx8im64E/UcSJIDEE4x8dVBgjJss/dG8eFAw6A5tPA8mbZlxilj+Y/2DXy9isg+h6cPfFwZ/VVobJkV/1Vkg2Nc+ZdQYGCEESmmiogACb+VFIvbkoDGPkumrgeiS46zvEkbkhyZJpJDKNQxNTJRUQZ/s2dUtz3ox520g5b8Y0Wj5yc0jTsQJN5ibsksYHTvy/c5lGdoWRXJfGHytmC0mcCBAwX8vHNkk6A5vOYAVim6zy7ztjFbBhNkgpNb5XYzpRSDNFA6ft6Xfnct6MK4zk13/rxcQPnJjWi2qy516NnUdQ3Nsmq5z1JbUXmrwy9ks6Z8m++5IPXlcQvm2kq3t9pyTrfKKQsWvQ+MEvBevVcVhJ9oETZ8EaKW5GGcJKAxyG3H52S8VpbJbZuzOjYj1pJaXvXx2HWy0qrQTTTJn1JdGtwL0PMUy5q8xW/gcqD2aNuiUnsYEA6pMAdxggk9jYqu/NSBWD2qV/blFQQJaT+mHIbOGwDDJjyPrhdn27Hsx9mV1SybfuKTuk7bJ9Xo8K70Sx8GrIXcsEbLrElTIL4iw3ppVQt9JqsFTC6UuvWFxy1zK5tjRtV1Sc8mlg8vWzy08vve/aFg3GZrGtn/zxbU7xx4quB52BzVUvpTOwC5ddNJe0XXCOQqQ/XiWQZrC2rVSJ1eYZDe1SX100tshlJcj8Ii2/GCIoXh+HwF7BanMtPj2IbG9P1E654shEPj0IpqbCOQzBjQtXwArNVU9XGtcNQgjAO1Gsq1BaoWOFFMC2sGX/GsrLaHr/jNHQpual2IsnAAKvxkjZlXrP2/k/Qa41kXEgZs0AAAAASUVORK5CYII=",[[5.26983223409066,-52.9397755509196],[5.26733223409075,-52.9373755509195]],0.5,null,null,null]},{"method":"addCircles","args":[[5.26835259509187,5.26932155543634,5.26909960602743,5.26847303316809,5.26911925363287,5.26905569879646,5.26954096195009,5.26875994620955,5.26866383248229,5.26911811028825,5.26885008167198,5.26895904779104,5.2688906053025,5.2692630313487,5.2696569130035,5.26927210913976,5.26890919620661,5.26887802705633,5.26934442566697,5.26974037636651,5.26882724284758,5.26921565095046,5.26946326913404,5.26970786174029,5.26969224131477,5.26821642537766,5.26777814255553,5.26786663323671,5.26761986898313,5.2684178540448,5.26805148191815,5.26816777685569,5.26775032644978,5.26856403704425,5.2686599623875,5.26898900227752,5.2684674467829,5.2692390686566,5.26956739699495,5.26862066043718,5.26956296834841,5.26875315828643,5.26925474956809,5.26966445581732,5.26917936908756,5.26983223426348,5.2678960775992,5.26831374545711,5.26824704891632,5.26770357488638,5.26861436588718,5.26865709098739,5.26875374157538,5.2686350461755,5.26879270578928,5.26910632524365,5.26899734212604,5.2695063029868,5.26958168660375,5.26945378076293,5.26955433924876,5.26929405510261,5.26889641196745,5.26975027830307,5.26950502212594,5.26886845594253,5.26769907993359,5.26754541995008,5.2683852593774,5.26762791663018,5.2685134434536,5.26773262588353,5.26781316775205,5.2678718003784,5.26823319488645,5.26865444062002,5.26794210663124,5.26799832196704,5.26773814790138,5.26888150677719,5.26944364404961,5.26944840951554,5.2688650218571,5.26865217776231,5.26873207760091,5.26869420861724,5.26967011719152,5.26958436852033,5.2690255056606,5.2689027397346,5.26926854869293,5.26932987411395,5.26955237433904,5.26940835768522,5.2696631850056,5.26780396814943,5.26793041383777,5.26812643540047,5.26736748273314,5.2679803181676,5.26745255373304,5.26820586191252,5.26848049668992,5.26776112427912],[-52.9395408562319,-52.9397755509196,-52.9395524749427,-52.939335754278,-52.9392317794879,-52.9391354681684,-52.9390016805737,-52.9388405712281,-52.9386748215566,-52.9392360038381,-52.9387486826102,-52.93932345068,-52.9384381987833,-52.9384277972649,-52.9384230995503,-52.9382347513081,-52.9379123059106,-52.9379409590068,-52.9378767313514,-52.9379334852627,-52.9375543716681,-52.9376742385023,-52.9376392097548,-52.937668435789,-52.9376035594986,-52.9391728892431,-52.9389189842172,-52.9380852367966,-52.9380275364364,-52.9380021055312,-52.9375201176096,-52.9375565559888,-52.9375081919834,-52.9393278626183,-52.9393726939645,-52.9391406166326,-52.938952408019,-52.9390452780587,-52.9390415048329,-52.9387471256224,-52.9388306597876,-52.9384800515998,-52.9385467164942,-52.9383599862611,-52.938074367305,-52.9378328640416,-52.9384289146588,-52.9384073788055,-52.9384125273727,-52.9381856370764,-52.9382282024273,-52.937755092297,-52.9375671094426,-52.9395707639284,-52.9392082178341,-52.9392097543223,-52.9390030949372,-52.9390621729692,-52.938989405051,-52.9388709089855,-52.9388796766726,-52.9386271684685,-52.9382068098599,-52.9380200470666,-52.9376596331065,-52.9382924085838,-52.9392657077168,-52.9390701847198,-52.9390324831101,-52.9383466260898,-52.9385176412997,-52.9390183393889,-52.9381966874053,-52.9382405573414,-52.9383248261104,-52.9380617475418,-52.9374391668822,-52.9373519645849,-52.9379712492623,-52.9395444699781,-52.9394035928534,-52.9389624968231,-52.938850480307,-52.9387880930019,-52.9387167484032,-52.9381751784443,-52.9383566214938,-52.9383101305414,-52.9381254706926,-52.937989515511,-52.9381079032555,-52.9381943425551,-52.9380594576584,-52.9376706078955,-52.9376795717154,-52.9391544167464,-52.9390161340934,-52.9390367539514,-52.9386863046842,-52.938778117706,-52.9384061185512,-52.9383918239466,-52.9380285126455,-52.9378515302255],[2.54647908947033,6.04788783749202,1.43239448782705,1.90985931710275,1.90985931710274,2.22816920328653,1.59154943091895,3.02394391874601,1.59154943091895,2.38732414637843,0.954929658551372,2.54647908947033,1.90985931710275,2.38732414637843,2.06901426019464,2.70563403256222,0.159154943091895,0.159154943091895,2.70563403256222,0.636619772367581,1.43239448782706,1.90985931710274,2.06901426019464,1.59154943091895,2.38732414637843,3.81971863420549,3.5014087480217,2.54647908947032,2.06901426019464,1.59154943091895,2.54647908947032,2.70563403256222,2.06901426019464,0.954929658551372,0.318309886183791,1.27323954473516,3.81971863420549,1.90985931710274,1.59154943091895,0.795774715459476,0.477464829275686,2.38732414637843,1.90985931710274,0.636619772367581,2.06901426019464,2.70563403256222,1.27323954473517,1.59154943091895,2.06901426019464,2.06901426019464,0.318309886183791,0.318309886183791,0.954929658551372,2.22816920328653,0.318309886183791,3.81971863420549,1.43239448782706,2.06901426019464,1.27323954473516,1.75070437401085,0.954929658551373,3.5014087480217,3.81971863420549,1.43239448782706,2.38732414637843,2.38732414637843,3.97887357729739,1.43239448782706,2.22816920328653,5.57042300821634,3.18309886183791,0.795774715459476,3.02394391874601,2.22816920328653,2.54647908947032,0.795774715459478,1.59154943091895,3.5014087480217,0.477464829275686,1.43239448782706,1.27323954473516,3.66056369111359,1.90985931710275,2.54647908947032,2.38732414637843,1.27323954473516,1.43239448782706,1.43239448782706,0.159154943091892,1.90985931710274,1.75070437401085,1.59154943091895,2.06901426019464,2.06901426019463,2.22816920328654,2.54647908947032,3.81971863420549,4.29718346348118,0.636619772367581,1.75070437401084,5.72957795130823,1.59154943091895,0.954929658551372,2.22816920328653],null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2,"dashArray":null},null,null,["+ 2.5 cm","+ 6 cm","+ 1.4 cm","+ 1.9 cm","+ 1.9 cm","+ 2.2 cm","+ 1.6 cm","+ 3 cm","+ 1.6 cm","+ 2.4 cm","+ 1 cm","+ 2.5 cm","+ 1.9 cm","+ 2.4 cm","+ 2.1 cm","+ 2.7 cm","+ 0.2 cm","+ 0.2 cm","+ 2.7 cm","+ 0.6 cm","+ 1.4 cm","+ 1.9 cm","+ 2.1 cm","+ 1.6 cm","+ 2.4 cm","+ 3.8 cm","+ 3.5 cm","+ 2.5 cm","+ 2.1 cm","+ 1.6 cm","+ 2.5 cm","+ 2.7 cm","+ 2.1 cm","+ 1 cm","+ 0.3 cm","+ 1.3 cm","+ 3.8 cm","+ 1.9 cm","+ 1.6 cm","+ 0.8 cm","+ 0.5 cm","+ 2.4 cm","+ 1.9 cm","+ 0.6 cm","+ 2.1 cm","+ 2.7 cm","+ 1.3 cm","+ 1.6 cm","+ 2.1 cm","+ 2.1 cm","+ 0.3 cm","+ 0.3 cm","+ 1 cm","+ 2.2 cm","+ 0.3 cm","+ 3.8 cm","+ 1.4 cm","+ 2.1 cm","+ 1.3 cm","+ 1.8 cm","+ 1 cm","+ 3.5 cm","+ 3.8 cm","+ 1.4 cm","+ 2.4 cm","+ 2.4 cm","+ 4 cm","+ 1.4 cm","+ 2.2 cm","+ 5.6 cm","+ 3.2 cm","+ 0.8 cm","+ 3 cm","+ 2.2 cm","+ 2.5 cm","+ 0.8 cm","+ 1.6 cm","+ 3.5 cm","+ 0.5 cm","+ 1.4 cm","+ 1.3 cm","+ 3.7 cm","+ 1.9 cm","+ 2.5 cm","+ 2.4 cm","+ 1.3 cm","+ 1.4 cm","+ 1.4 cm","+ 0.2 cm","+ 1.9 cm","+ 1.8 cm","+ 1.6 cm","+ 2.1 cm","+ 2.1 cm","+ 2.2 cm","+ 2.5 cm","+ 3.8 cm","+ 4.3 cm","+ 0.6 cm","+ 1.8 cm","+ 5.7 cm","+ 1.6 cm","+ 1 cm","+ 2.2 cm"],null,null,null]}],"limits":{"lat":[5.26733223409075,5.26983223426348],"lng":[-52.9397755509196,-52.9373519645849]}},"evals":[],"jsHooks":[]}</script>
+</section><section id="data-preparation" class="slide level2">
+<h2>Data preparation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">I =</span> <span class="kw">dim</span>(trees)[<span class="dv">1</span>], <span class="co"># Nb of trees</span>
+             <span class="dt">growth =</span> trees<span class="op">$</span>growth, <span class="co"># growth vector</span>
+             <span class="dt">dbh =</span> trees<span class="op">$</span>dbh_c<span class="op">/</span><span class="kw">max</span>(trees<span class="op">$</span>dbh_c), <span class="co"># dbh in 1988 vector</span>
+             <span class="dt">J =</span> <span class="kw">dim</span>(gaps)[<span class="dv">1</span>], <span class="co"># Nb of gaps</span>
+             <span class="dt">S =</span> gaps<span class="op">$</span>area<span class="op">/</span><span class="kw">max</span>(gaps<span class="op">$</span>area), <span class="co"># gaps surface vector</span>
+             <span class="dt">D =</span> D<span class="op">/</span><span class="kw">max</span>(D)) <span class="co">#tree-gaps distance matrix</span></code></pre></div>
+</section><section id="model-5" class="slide level2">
+<h2>Model</h2>
+<p><span class="math display">\[growth_i \sim \mathcal{N}(\mu*\sum_j^J(e^{-\alpha*d_{i,j}}*S_j^\beta);\sigma)\]</span></p>
+</section><section id="model-6" class="slide level2">
+<h2>Model</h2>
+<p><span class="math display">\[growth_i \sim \mathcal{N}(\mu*\sum_j^J(e^{-\alpha*d_{i,j}}*S_j^\beta);\sigma)\]</span></p>
+<pre class="stan"><code>data {
+  int&lt;lower=0&gt; I ; // Nb of trees
+  vector&lt;lower=0&gt;[I] growth ; // growth vector
+  vector&lt;lower=0&gt;[I] dbh ; // dbh in 1988 vector
+  int&lt;lower=0&gt; J ; // Nb of gaps
+  vector&lt;lower=0&gt;[J] S ; // gaps surface vector
+  matrix&lt;lower=0&gt;[I,J] D ; // tree-gaps distance matrix
+}
+parameters {
+  real mu ;
+  real alpha ; // distance parameter
+  real&lt;lower=0,upper=3&gt; beta ; // surface parameter (power)
+  real&lt;lower=0,upper=10&gt; sigma ;
+}
+transformed parameters {
+  vector[J] Sbeta ; // Sbeta is S^beta because pow(vector,real) is impossible in stan
+  vector[I] Idisturb ; // disturbance index
+  for(j in 1:J)
+    Sbeta[j] = pow(S[j], beta) ;
+  for(i in 1:I)
+    Idisturb[i] = exp(-alpha*D[i,])*Sbeta ;
+}
+model {
+  growth ~ normal(mu*Idisturb, sigma) ;
+}</code></pre>
+</section><section id="sampling-5" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">stan</span>(<span class="st">&quot;./stan_models/gap_model.stan&quot;</span>, <span class="dt">data =</span> data)</code></pre></div>
+<pre><code>## In file included from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config.hpp:39:0,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/math/tools/config.hpp:13,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/var.hpp:7,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/core.hpp:12,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math/rev/mat.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/stan/math.hpp:4,
+##                  from /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/StanHeaders/include/src/stan/model/model_header.hpp:4,
+##                  from file2cf6364c8080.cpp:8:
+## /home/sylvain/R/x86_64-pc-linux-gnu-library/3.4/BH/include/boost/config/compiler/gcc.hpp:186:0: warning: &quot;BOOST_NO_CXX11_RVALUE_REFERENCES&quot; redefined
+##  #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+##  ^
+## &lt;command-line&gt;:0:0: note: this is the location of the previous definition
+## 
+## SAMPLING FOR MODEL &#39;gap_model&#39; NOW (CHAIN 1).
+## 
+## Gradient evaluation took 0.000341 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 3.41 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 11.6571 seconds (Warm-up)
+##                11.3052 seconds (Sampling)
+##                22.9623 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;gap_model&#39; NOW (CHAIN 2).
+## 
+## Gradient evaluation took 0.000266 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 2.66 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 11.9904 seconds (Warm-up)
+##                10.8874 seconds (Sampling)
+##                22.8778 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;gap_model&#39; NOW (CHAIN 3).
+## 
+## Gradient evaluation took 0.000281 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 2.81 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 11.063 seconds (Warm-up)
+##                10.9926 seconds (Sampling)
+##                22.0557 seconds (Total)
+## 
+## 
+## SAMPLING FOR MODEL &#39;gap_model&#39; NOW (CHAIN 4).
+## 
+## Gradient evaluation took 0.000266 seconds
+## 1000 transitions using 10 leapfrog steps per transition would take 2.66 seconds.
+## Adjust your expectations accordingly!
+## 
+## 
+## Iteration:    1 / 2000 [  0%]  (Warmup)
+## Iteration:  200 / 2000 [ 10%]  (Warmup)
+## Iteration:  400 / 2000 [ 20%]  (Warmup)
+## Iteration:  600 / 2000 [ 30%]  (Warmup)
+## Iteration:  800 / 2000 [ 40%]  (Warmup)
+## Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Iteration: 1200 / 2000 [ 60%]  (Sampling)
+## Iteration: 1400 / 2000 [ 70%]  (Sampling)
+## Iteration: 1600 / 2000 [ 80%]  (Sampling)
+## Iteration: 1800 / 2000 [ 90%]  (Sampling)
+## Iteration: 2000 / 2000 [100%]  (Sampling)
+## 
+##  Elapsed Time: 12.5923 seconds (Warm-up)
+##                10.9224 seconds (Sampling)
+##                23.5147 seconds (Total)</code></pre>
+</section><section id="sampling-6" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;mu&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>)
+<span class="kw">print</span>(fit, <span class="dt">pars =</span> pars)</code></pre></div>
+<pre><code>## Inference for Stan model: gap_model.
+## 4 chains, each with iter=2000; warmup=1000; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##       mean se_mean   sd  2.5%  25%  50%  75% 97.5% n_eff Rhat
+## mu    0.63    0.01 0.26  0.21 0.45 0.60 0.79  1.21   857 1.00
+## alpha 1.31    0.04 1.14 -0.39 0.57 1.15 1.85  4.17   747 1.00
+## beta  2.17    0.02 0.62  0.74 1.76 2.29 2.68  2.97   930 1.01
+## sigma 1.17    0.00 0.08  1.02 1.11 1.16 1.22  1.35  1706 1.00
+## 
+## Samples were drawn using NUTS(diag_e) at Mon Feb 26 19:19:38 2018.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).</code></pre>
+</section><section id="trace-of-chains-3" class="slide level2">
+<h2>Trace of chains</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_trace</span>(<span class="kw">as.array</span>(fit), <span class="dt">pars =</span> <span class="kw">c</span>(pars, <span class="st">&quot;lp__&quot;</span>),
+           <span class="dt">facet_args =</span> <span class="kw">list</span>(<span class="dt">labeller =</span> label_parsed))</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-59-1.png" /><!-- --></p>
+</section><section id="pairs-3" class="slide level2">
+<h2>Pairs</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_pairs</span>(<span class="kw">as.array</span>(fit), <span class="dt">pars =</span> pars)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-60-1.png" /><!-- --></p>
+</section><section id="posteriors-1" class="slide level2">
+<h2>Posteriors</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mcmc_areas</span>(<span class="kw">as.array</span>(fit), <span class="dt">prob =</span> <span class="fl">0.8</span>,
+           <span class="dt">pars =</span> pars)</code></pre></div>
+<p><img src="stan_files/figure-revealjs/unnamed-chunk-61-1.png" /><!-- --></p>
+</section></section>
+<section><section id="what-about-greta" class="titleslide slide level1"><h1>What about <code>greta</code></h1></section><section id="greta-vs.-stan" class="slide level2">
+<h2><code>greta</code> vs. <code>stan</code></h2>
+<ul>
+<li>All in R
+<ul>
+<li>no new language learning</li>
+<li>functions writting</li>
+</ul></li>
+<li>Tensor-flow algorithm</li>
+<li>Plot models</li>
+<li>Support matricial equations</li>
+<li>Works with <code>bayesplot</code></li>
+<li>Only Hamiltonian Monte Carlo (HMC) algorithm</li>
+<li>Younger and smaller (less support)</li>
+</ul>
+</section><section id="model-7" class="slide level2">
+<h2>Model</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># data</span>
+growth &lt;-<span class="st"> </span><span class="kw">as_data</span>(trees<span class="op">$</span>growth)
+dbh &lt;-<span class="st"> </span><span class="kw">as_data</span>(trees<span class="op">$</span>dbh_c<span class="op">/</span><span class="kw">max</span>(trees<span class="op">$</span>dbh_c))
+S &lt;-<span class="st"> </span><span class="kw">as_data</span>(gaps<span class="op">$</span>area<span class="op">/</span><span class="kw">max</span>(gaps<span class="op">$</span>area))
+Dm &lt;-<span class="st"> </span><span class="kw">as_data</span>(D<span class="op">/</span><span class="kw">max</span>(D))
+<span class="co"># variables and priors</span>
+mu &lt;-<span class="st"> </span><span class="kw">gamma</span>(<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>,<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>)
+alpha &lt;-<span class="st"> </span><span class="kw">gamma</span>(<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>,<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>)
+beta &lt;-<span class="st"> </span><span class="kw">gamma</span>(<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>,<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>, <span class="dt">truncation =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>))
+sigma &lt;-<span class="st"> </span><span class="kw">gamma</span>(<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>,<span class="dv">10</span><span class="op">^-</span><span class="dv">2</span>, <span class="dt">truncation =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">10</span>))
+<span class="co"># operations</span>
+Idisturb &lt;-<span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>alpha<span class="op">*</span>D) <span class="op">%*%</span><span class="st"> </span>S<span class="op">^</span>beta
+<span class="co"># likelihood</span>
+<span class="kw">distribution</span>(growth) &lt;-<span class="st"> </span><span class="kw">normal</span>(mu<span class="op">*</span>Idisturb, sigma)
+<span class="co"># defining the model</span>
+m &lt;-<span class="st"> </span><span class="kw">model</span>(mu, alpha, beta, sigma)</code></pre></div>
+</section><section id="model-graph" class="slide level2">
+<h2>Model graph</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(m)
+<span class="kw">include_graphics</span>(<span class="st">&quot;./stan_data/gap_model_graph.png&quot;</span>)</code></pre></div>
+<p><img src="stan_data/gap_model_graph.png" width="1815" /></p>
+</section><section id="sampling-7" class="slide level2">
+<h2>Sampling</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">mcmc</span>(m, <span class="dt">n_samples =</span> <span class="dv">1000</span>)
+<span class="kw">summary</span>(fit)</code></pre></div>
+<pre><code>## 
+## Iterations = 1:1000
+## Thinning interval = 1 
+## Number of chains = 1 
+## Sample size per chain = 1000 
+## 
+## 1. Empirical mean and standard deviation for each variable,
+##    plus standard error of the mean:
+## 
+##            Mean        SD  Naive SE Time-series SE
+## mu    6.145e-02 1.238e-02 3.916e-04      3.435e-03
+## alpha 1.484e-06 2.087e-05 6.598e-07      1.458e-06
+## beta  3.515e-08 4.793e-07 1.516e-08      3.508e-08
+## sigma 1.045e+00 2.631e-01 8.321e-03      4.364e-02
+## 
+## 2. Quantiles for each variable:
+## 
+##            2.5%       25%       50%       75%     97.5%
+## mu    1.449e-06 6.394e-02 6.394e-02 6.394e-02 6.394e-02
+## alpha 7.823e-12 7.823e-12 7.823e-12 7.823e-12 4.057e-10
+## beta  8.502e-13 8.502e-13 8.502e-13 8.502e-13 1.064e-11
+## sigma 9.926e-01 9.926e-01 9.926e-01 9.926e-01 2.271e+00</code></pre>
+</section></section>
+<section><section id="conclusion" class="titleslide slide level1"><h1>Conclusion</h1></section><section id="model-choice" class="slide level2">
+<h2>Model choice</h2>
+<ul>
+<li>Prior, laws, and model forms knowledge</li>
+<li>Fitting techniques and tricks
+<ul>
+<li>center, reduce, bound, link…</li>
+</ul></li>
+<li><strong>Try and compare</strong>
+<ul>
+<li>convergence, parameters number, likelihood, prediction quality</li>
+<li>e.g. <span class="math inline">\(\hat{R}\)</span>, <span class="math inline">\(K\)</span>, <span class="math inline">\(log(\mathcal{L})\)</span>, <span class="math inline">\(RMSEP\)</span>…</li>
+<li><a href="./stan_data/rotten2.html">rotten model example</a></li>
+</ul></li>
+</ul>
+</section><section id="references" class="slide level2">
+<h2>References</h2>
+<ul>
+<li><strong>R help (?)</strong></li>
+<li>Largely inspired by Daniel Furr and Ben Goodrich <a href="http://mc-stan.org/workshops/IMPS2016/half1.html#2">presentaion</a> and Eric Novik presentation</li>
+<li><a href="http://m-clark.github.io/workshops/bayesian/index.html#home">Michael Clark blog</a> <em>Become a bayesian with R &amp; stan</em></li>
+<li><a href="mc-stan.org/"><code>stan</code> website</a></li>
+<li><a href="https://github.com/stan-dev"><code>stan</code> GitHub</a> with packages and wiki</li>
+<li><a href="http://discourse.mc-stan.org/"><code>stan</code> forum</a></li>
+<li><a href="https://greta-dev.github.io/greta/index.html"><code>greta</code> website</a></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="stan_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="stan_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'stan_files/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

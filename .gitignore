@@ -4,3 +4,10 @@
 # Hugo
 /resources/
 public/
+.Rproj.user
+
+#
+\\.knit\\.md$
+\\.utf8\\.md$"
+.RData
+.Rhistory

@@ -17,28 +17,50 @@ date_format = "Jan 2006"
 #   Required fields are `title`, `company`, and `date_start`.
 #   Leave `date_end` empty if it's your current employer.
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
+
 [[experience]]
-  title = "CEO"
-  company = "GenCoin"
+  title = "PhD student: Ecological genomics of niche exploitation and individual performance intropical forest trees"
+  company = "UMRs Biodiversité Gènes et Communautés (BIOGECO) andÉcologie des FOrêts Guyanaise (ECOFOG)"
   company_url = ""
-  location = "California"
-  date_start = "2017-01-01"
-  date_end = ""
-  description = """
-  Responsibilities include:
+  location = "Bordeaux/Kourou, France"
+  date_start = "2017-09-01"
+  date_end = "2020-12-31"
+  description = "Ecological genomics, Functional ecology, and community ecology"
+
+# [[experience]]
+#   title = "Research internship: Biodiversity and resilience of tropical forest ecosystem after disturbance"
+#   company = "UMR Écologie des FOrêts Guyanaise (ECOFOG)"
+#   company_url = ""
+#   location = "Kourou, French Guiana"
+#   date_start = "2017-02-02"
+#   date_end = "2017-08-02"
+#   description = "Modelling (TROLL model), statistics, and forest dynamic"
+# 
+# [[experience]]
+#   title = "Research internship: Wood and leaf strategy in a low elevation rainforest of WesternGhats (India)"
+#   company = "French Institute of Pondicherry (FIP)"
+#   company_url = ""
+#   location = "Pondicherry, India"
+#   date_start = "2016-03-01"
+#   date_end = "2016-08-01"
+#   description = "Statistics, Community and functional ecology, botany"
+#   
+# [[experience]]
+#   title = "Research internship: Species distribution modelling (SSDM)"
+#   company = "Institut Agronomiquenéo-Calédonien (IAC)"
+#   company_url = ""
+#   location = "Nouméa, New Caledonia"
+#   date_start = "2015-09-15"
+#   date_end = "2016-02-15"
+#   description = "Modelling, statistics, ecology, botany and R development"
+#   
+# [[experience]]
+#   title = "Research internship in soil ecology"
+#   company = "Helmoltz Zentrum"
+#   company_url = ""
+#   location = "Muncih, Germany"
+#   date_start = "2015-07-01"
+#   date_end = "2015-08-30"
+#   description = "Statistics, functional ecology and scientific writing"
   
-  * Analysing
-  * Modelling
-  * Deploying
-  """
-
-[[experience]]
-  title = "Professor"
-  company = "University X"
-  company_url = ""
-  location = "California"
-  date_start = "2016-01-01"
-  date_end = "2016-12-31"
-  description = """Taught electronic engineering and researched semiconductor physics."""
-
 +++
