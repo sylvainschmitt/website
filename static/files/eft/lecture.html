@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Sylvain SCHMITT" />
+  <title>Introduction to bayesian modelling with WinBUGS</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="lecture_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="lecture_files/reveal.js-3.3.0.1/css/theme/blood.css" id="theme">
+
+<style type="text/css">
+.reveal section img {
+  background: rgba(255, 255, 255, 0.85);
+}
+</style>
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link href="lecture_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="lecture_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Introduction to bayesian modelling with WinBUGS</h1>
+    <h2 class="author">Sylvain SCHMITT</h2>
+    <h3 class="date">November 7, 2019, EFT Msc, ECOFOG</h3>
+</section>
+
+<section><section id="introduction" class="title-slide slide level1"><h1>Introduction</h1></section><section id="why" class="slide level2">
+<h2>Why</h2>
+<ul>
+<li>Cleaned and secured <strong>data</strong></li>
+<li>Computer &gt; <strong>R</strong> &gt; Import &gt; Check &gt; Happy :)</li>
+<li>What is your <strong>question</strong> ?</li>
+<li>Imagine some strange twisted wavering distorted curves in your scatter plot</li>
+<li>But you resign yourself to linearity typing <code>lm()</code></li>
+</ul>
+</section><section id="why-bayes" class="slide level2">
+<h2>Why Bayes</h2>
+<ul>
+<li>Express your <strong>beliefs/expertise</strong> about parameters</li>
+<li>Properly account for <strong>uncertainty</strong></li>
+<li>Handle <strong>small data</strong></li>
+<li><strong>Any form</strong> of model</li>
+</ul>
+</section></section>
+<section><section id="theory" class="title-slide slide level1"><h1>Theory</h1></section><section id="bayes-theorem--proba-version" class="slide level2">
+<h2>Bayes theorem- Proba version</h2>
+<p><span class="math display">\[P(A|B) = \frac{P(A \cap B)}{P(B)}\]</span> <span class="math display">\[P(A|B)P(B) = P(A \cap B) = P(B|A)P(A)\]</span> <span class="math display">\[P(A|B) = \frac{P(B|A)P(A)}{P(B)}\]</span></p>
+<p><img data-src="https://qph.fs.quoracdn.net/main-qimg-fe1f9e3bb7d94a6986d3b196bf081682" /><!-- --></p>
+</section><section id="bayes-theorem" class="slide level2">
+<h2>Bayes theorem</h2>
+<p><span class="math display">\[p(\theta|y) = \frac{p(\theta)*p(y|\theta)}{p(y)}\]</span></p>
+<ul>
+<li><span class="math inline">\(p(\theta)\)</span> represents what someone <strong>believes</strong> about <span class="math inline">\(\theta\)</span> <strong>prior</strong> to observing <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(p(\theta|y)\)</span> represents what someone <strong>believes</strong> about <span class="math inline">\(\theta\)</span> <strong>after</strong> observing <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(p(y|\theta)\)</span> is the <strong>likelihood</strong> function</li>
+<li><span class="math inline">\(p(y)\)</span> is the <strong>marginal likelihood</strong> equal to <span class="math inline">\(\int p(y|\theta)*p(\theta)*d\theta\)</span></li>
+</ul>
+</section><section id="bayes-theorem-1" class="slide level2">
+<h2>Bayes theorem</h2>
+<p><span class="math display">\[p(\theta|y) = \frac{p(\theta)*p(y|\theta)}{p(y)}\]</span></p>
+<p><span class="math display">\[p(hypothesis|data) \propto p(hypotheses)*p(data|hypothesis)\]</span></p>
+<p><span class="math display">\[posterior \propto prior*likelihood\]</span></p>
+<p><span class="math display">\[updated~belief \propto prior~belief*current~evidence\]</span></p>
+</section></section>
+<section><section id="gender-example" class="title-slide slide level1"><h1>Gender example</h1></section><section id="data---chance-to-pick-a-girl-to-the-chalkboard" class="slide level2">
+<h2>Data - Chance to pick a girl to the chalkboard ?</h2>
+<p>A classroom with boys and girls</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="co"># Observations, 0 boys, 1 girls</span></a></code></pre></div>
+<p><span class="math inline">\(\theta\)</span> approximation</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># ?</span></a></code></pre></div>
+</section><section id="data---chance-to-pick-a-girl-to-the-chalkboard-1" class="slide level2">
+<h2>Data - Chance to pick a girl to the chalkboard</h2>
+<p>A classroom with boys and girls</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>) <span class="co"># Observations, 0 boys, 1 girls</span></a></code></pre></div>
+<p><span class="math inline">\(\theta\)</span> approximation</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">sum</span>(y) <span class="op">/</span><span class="st"> </span><span class="kw">length</span>(y)</a></code></pre></div>
+<pre><code>## [1] 0.4444444</code></pre>
+</section><section id="likelihood---law" class="slide level2">
+<h2>Likelihood - Law ?</h2>
+<blockquote>
+<p><span class="math inline">\(p(y|\theta)\)</span></p>
+</blockquote>
+<p><em>Back to maths</em></p>
+<p><span class="math display">\[Y \sim ?\]</span></p>
+</section><section id="likelihood---law-1" class="slide level2">
+<h2>Likelihood - Law</h2>
+<blockquote>
+<p><span class="math inline">\(p(y|\theta)\)</span></p>
+</blockquote>
+<p><em>Back to maths</em></p>
+<p><span class="math display">\[Y \sim \mathcal B(\theta,n)\]</span></p>
+</section><section id="likelihood---formula" class="slide level2">
+<h2>Likelihood - Formula</h2>
+<blockquote>
+<p><span class="math inline">\(p(y|\theta)\)</span></p>
+</blockquote>
+<p><em>Back to maths</em></p>
+<p><span class="math display">\[Y \sim \mathcal B(\theta,n)\]</span> <span class="math display">\[p(y|\theta)=\prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}\]</span> <span class="math display">\[log(p(y|\theta))=\sum_{n=1}^N{y_n}*log(\theta) + \sum_{n=1}^N(1-y_n)*log(1-\theta)\]</span></p>
+</section><section id="likelihood---r-code" class="slide level2">
+<h2>Likelihood - R code ?</h2>
+<p><span class="math display">\[p(y|\theta)=\prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}\]</span> <span class="math display">\[log(p(y|\theta))=\sum_{n=1}^N{y_n}*log(\theta) + \sum_{n=1}^N(1-y_n)*log(1-\theta)\]</span> <span class="math display">\[p(y|\theta=0.1) = ?\]</span></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># log_likelihood &lt;- function(theta, y) ?</span></a></code></pre></div>
+</section><section id="likelihood---r-code-1" class="slide level2">
+<h2>Likelihood - R code</h2>
+<p><span class="math display">\[p(y|\theta)=\prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}\]</span> <span class="math display">\[log(p(y|\theta))=\sum_{n=1}^N{y_n}*log(\theta) + \sum_{n=1}^N(1-y_n)*log(1-\theta)\]</span> <span class="math display">\[p(y|\theta=0.1) = ?\]</span></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">log_likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(theta, y) </a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  <span class="kw">sum</span>(<span class="kw">log</span>(theta)<span class="op">*</span>y <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(<span class="dv">1</span><span class="op">-</span>theta)<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span>y))</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">log_likelihood_dbinom &lt;-<span class="st"> </span><span class="cf">function</span>(theta, y) </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">  <span class="kw">sum</span>(<span class="kw">dbinom</span>(y, <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">prob =</span> theta, <span class="dt">log =</span> T))</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="kw">log_likelihood</span>(<span class="fl">0.1</span>, y)</a></code></pre></div>
+<pre><code>## [1] -9.737143</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">log_likelihood</span>(<span class="fl">0.6</span>, y)</a></code></pre></div>
+<pre><code>## [1] -6.624756</code></pre>
+</section><section id="priors---form" class="slide level2">
+<h2>Priors - Form ?</h2>
+<blockquote>
+<p><span class="math inline">\(p(\theta)\)</span> ? No information ? Non informative prior !</p>
+</blockquote>
+<p><span class="math display">\[\theta \sim ?\]</span></p>
+</section><section id="priors---form-1" class="slide level2">
+<h2>Priors - Form ?</h2>
+<blockquote>
+<p><span class="math inline">\(p(\theta)\)</span> ? No information ? Non informative prior !</p>
+</blockquote>
+<p><span class="math display">\[\theta \sim \mathcal U (0, 1)\]</span> <span class="math display">\[\theta \sim \mathcal B (1, 1)\]</span></p>
+</section><section id="priors---gamma-law" class="slide level2">
+<h2>Priors - Gamma law</h2>
+<p><span class="math display">\[X \sim \Gamma(\alpha,\beta)~,~f(x)=\frac{\beta^\alpha x^{\alpha-1}e^{-\beta x}}{\Gamma(\alpha)}~,~\Gamma(z)=\int_0^1x^{z-1}e^{-x}dx\]</span></p>
+<p><img data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Gamma_distribution_pdf.svg/800px-Gamma_distribution_pdf.svg.png" /><!-- --></p>
+</section><section id="priors---beta-law" class="slide level2">
+<h2>Priors - Beta law</h2>
+<p><span class="math display">\[X \sim B (\alpha,\beta)~,~f(x)=\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)}~,~B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}\]</span></p>
+<p><img data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Beta_distribution_pdf.svg/531px-Beta_distribution_pdf.svg.png" /><!-- --></p>
+</section><section id="priors---form-2" class="slide level2">
+<h2>Priors - Form</h2>
+<p><span class="math display">\[p(\theta) \sim \mathcal B(1,1)\]</span></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">curve</span>(<span class="kw">dbeta</span>(x, <span class="dv">1</span>, <span class="dv">1</span>))</a></code></pre></div>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-10-1.png" /><!-- --></p>
+</section><section id="posterior---inference" class="slide level2">
+<h2>Posterior - Inference ?</h2>
+<blockquote>
+<p><span class="math inline">\(p(\theta|y) \propto ~?\)</span></p>
+</blockquote>
+</section><section id="posterior---inference-1" class="slide level2">
+<h2>Posterior - Inference</h2>
+<p><span class="math inline">\(p(\theta|y) \propto \mathcal L(y|\theta)p(\theta)\)</span></p>
+<p><span class="math inline">\(\mathcal L(y|\theta) = \prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}\)</span></p>
+<p><span class="math inline">\(p(\theta) = \frac{\theta^{\alpha-1}(1-\theta)^{\beta-1}}{B(\alpha,\beta)}~|\alpha=\beta=1\)</span></p>
+<p><span class="math inline">\(p(\theta|y) \propto \mathcal \prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}*\frac{\theta^{\alpha-1}(1-\theta)^{\beta-1}}{B(\alpha,\beta)}\)</span></p>
+</section><section id="posterior---inference-2" class="slide level2">
+<h2>Posterior - Inference</h2>
+<ul>
+<li><span class="math inline">\(p(\theta|y) \propto \mathcal L(y|\theta)p(\theta)\)</span></li>
+<li>Practically: prior <span class="math inline">\(p(\theta)\)</span> + data <span class="math inline">\(y\)</span> =&gt; posterior <span class="math inline">\(p(\theta|y)\)</span></li>
+<li>moving from <em>a priori</em> =&gt; <em>a posteriori</em> is nearly impossible analytically (excepted for conjugated laws, i.e. beta-binomial here)</li>
+<li>=&gt; Numerical methods <strong>MCMC</strong> to infer <em>a posteriori</em> laws</li>
+</ul>
+</section><section id="markov-chain-monte-carlo---methods" class="slide level2">
+<h2>Markov Chain Monte Carlo - Methods</h2>
+<p><em>inference based on the simulation of a high number of random variables</em></p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>may be applied to a wide range of problems</li>
+<li>a few underlying hypotheses</li>
+<li>easy to implement</li>
+</ul>
+<p><strong>Constraints</strong></p>
+<ul>
+<li>a good random generator</li>
+<li>computational power</li>
+<li>likelihood-explicit</li>
+</ul>
+</section><section id="mcmc---algorithm" class="slide level2">
+<h2>MCMC - Algorithm</h2>
+<ul>
+<li>Choose initial parameters = <strong>Initialisation</strong></li>
+<li>Compute likelihood and posterior values for those parameters</li>
+<li>Choose randomly new parameters thanks to a proposition function = <strong>random walk</strong></li>
+<li>Compute previous and new posterior fraction <span class="math inline">\(\frac{posterior_{new}}{posterior_{old}}\)</span></li>
+<li>Accept or reject the new parameters set picking a random value <span class="math inline">\(u\)</span> in a uniform law <span class="math inline">\(\mathcal U [0,1]\)</span> if <span class="math inline">\(u \leq \frac{posterior_{new}}{posterior_{old}}\)</span></li>
+<li>Repeat, repeat, … thousand of times !</li>
+</ul>
+</section><section id="mcmc---algorithm-1" class="slide level2">
+<h2>MCMC - Algorithm</h2>
+<p><img src="data/MCM.png" width="793" /></p>
+</section><section id="mcmc---algorithm-2" class="slide level2">
+<h2>MCMC - Algorithm</h2>
+<blockquote>
+<p>Now code your own MCMC in R !</p>
+</blockquote>
+</section><section id="mcmc---algorithm---likelihood" class="slide level2">
+<h2>MCMC - Algorithm - Likelihood</h2>
+<p><span class="math display">\[p(y|\theta)=\prod_{n=1}^N \theta^{y_n}*(1-\theta)^{1-y_n}\]</span></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(theta, y) </a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  <span class="kw">exp</span>(<span class="kw">sum</span>(<span class="kw">log</span>(theta)<span class="op">*</span>y <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(<span class="dv">1</span><span class="op">-</span>theta)<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span>y)))</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">likelihood_dbinom &lt;-<span class="st"> </span><span class="cf">function</span>(theta, y) </a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">  <span class="kw">exp</span>(<span class="kw">sum</span>(<span class="kw">dbinom</span>(y, <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">prob =</span> theta, <span class="dt">log =</span> T)))</a></code></pre></div>
+</section><section id="mcmc---algorithm---random-walk" class="slide level2">
+<h2>MCMC - Algorithm - Random walk ?</h2>
+<p><span class="math display">\[p(\theta|y) \propto p(\theta)*p(y|\theta)\]</span></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">walk &lt;-<span class="st"> </span><span class="cf">function</span>(theta_old, y, <span class="dt">sigma_explore =</span> <span class="fl">0.1</span>)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">  ?</a></code></pre></div>
+</section><section id="mcmc---algorithm---random-walk-1" class="slide level2">
+<h2>MCMC - Algorithm - Random walk ?</h2>
+<p><span class="math display">\[p(\theta|y) \propto p(\theta)*p(y|\theta)\]</span></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">walk &lt;-<span class="st"> </span><span class="cf">function</span>(theta_old, y, <span class="dt">sigma_explore =</span> <span class="fl">0.1</span>){</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">   theta_new &lt;-<span class="st"> </span>?</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">   ratio &lt;-<span class="st"> </span>?</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">   <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>) <span class="op">&lt;</span><span class="st"> </span>ratio) ?</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">}</a></code></pre></div>
+</section><section id="mcmc---algorithm---random-walk-2" class="slide level2">
+<h2>MCMC - Algorithm - Random walk</h2>
+<p><span class="math display">\[p(\theta|y) \propto p(\theta)*p(y|\theta)\]</span></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">walk &lt;-<span class="st"> </span><span class="cf">function</span>(theta_old, y, <span class="dt">sigma_explore =</span> <span class="fl">0.1</span>){</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">   theta_new &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1</span>, theta_old, sigma_explore)</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">   <span class="cf">if</span>(theta_new <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">     theta_new &lt;-<span class="st"> </span><span class="dv">10</span><span class="op">^-</span><span class="dv">6</span></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">   <span class="cf">if</span>(theta_new <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">     theta_new &lt;-<span class="st"> </span><span class="dv">1-10</span><span class="op">^-</span><span class="dv">6</span></a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">   ratio &lt;-<span class="st"> </span>(<span class="kw">dbeta</span>(theta_new, <span class="dv">1</span>, <span class="dv">1</span>)<span class="op">*</span><span class="kw">likelihood</span>(theta_new, y)) <span class="op">/</span><span class="st"> </span>(<span class="kw">dbeta</span>(theta_old, <span class="dv">1</span>, <span class="dv">1</span>)<span class="op">*</span><span class="kw">likelihood</span>(theta_old, y))</a>
+<a class="sourceLine" id="cb15-8" data-line-number="8">   <span class="cf">if</span>(<span class="kw">runif</span>(<span class="dv">1</span>) <span class="op">&lt;</span><span class="st"> </span>ratio){</a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">     <span class="kw">return</span>(theta_new)</a>
+<a class="sourceLine" id="cb15-10" data-line-number="10">   } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb15-11" data-line-number="11">     <span class="kw">return</span>(theta_old)</a>
+<a class="sourceLine" id="cb15-12" data-line-number="12">   }</a>
+<a class="sourceLine" id="cb15-13" data-line-number="13">}</a>
+<a class="sourceLine" id="cb15-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb15-15" data-line-number="15"><span class="kw">walk</span>(<span class="fl">0.1</span>, y)</a></code></pre></div>
+<pre><code>## [1] 0.1</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">walk</span>(<span class="fl">0.6</span>, y)</a></code></pre></div>
+<pre><code>## [1] 0.5329307</code></pre>
+</section><section id="mcmc---algorithm---sampling" class="slide level2">
+<h2>MCMC - Algorithm - Sampling ?</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co"># Init ?</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>n_iter)</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">  ?</a></code></pre></div>
+</section><section id="mcmc---algorithm---sampling-1" class="slide level2">
+<h2>MCMC - Algorithm - Sampling</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">theta_init &lt;-<span class="st"> </span><span class="fl">0.1</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">n_iter &lt;-<span class="st"> </span><span class="dv">10000</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">theta &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, n_iter)</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">theta[<span class="dv">1</span>] &lt;-<span class="st"> </span>theta_init</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span>n_iter)</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8">  theta[i] &lt;-<span class="st"> </span><span class="kw">walk</span>(theta[i<span class="dv">-1</span>], y)</a></code></pre></div>
+</section><section id="mcmc---algorithm---diagnostic" class="slide level2">
+<h2>MCMC - Algorithm - Diagnostic</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">data.frame</span>(<span class="dt">iter =</span> <span class="dv">1</span><span class="op">:</span>n_iter, <span class="dt">theta =</span> theta) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(iter, theta)) <span class="op">+</span><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>)</a></code></pre></div>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-18-1.png" /><!-- --></p>
+</section><section id="mcmc---algorithm---posterior" class="slide level2">
+<h2>MCMC - Algorithm - Posterior</h2>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">data.frame</span>(<span class="dt">iter =</span> <span class="dv">1</span><span class="op">:</span>n_iter, <span class="dt">theta =</span> theta) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(theta)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.3</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="kw">sum</span>(y)<span class="op">/</span><span class="kw">length</span>(y), <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)</a></code></pre></div>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-19-1.png" /><!-- --></p>
+</section></section>
+<section><section id="science-suicides" class="title-slide slide level1"><h1>Science &amp; Suicides</h1></section><section id="data---table" class="slide level2">
+<h2>Data - Table</h2>
+<blockquote>
+<p>US spending on science, space, and technology vs Suicides by hanging, strangulation and suffocation</p>
+</blockquote>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">year =</span> <span class="dv">1999</span><span class="op">:</span><span class="dv">2009</span>,</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">                   <span class="dt">suicide =</span> <span class="kw">c</span>(<span class="dv">5247</span>, <span class="dv">5688</span>, <span class="dv">6198</span>, <span class="dv">6462</span>, <span class="dv">6635</span>, <span class="dv">7336</span>, <span class="dv">7248</span>, </a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">                               <span class="dv">7491</span>, <span class="dv">8161</span>, <span class="dv">8578</span>, <span class="dv">9000</span>),</a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">                   <span class="dt">science =</span> <span class="kw">c</span>(<span class="fl">18.079</span>, <span class="fl">18.594</span>, <span class="fl">19.753</span>, <span class="fl">20.734</span>, <span class="fl">20.831</span>, </a>
+<a class="sourceLine" id="cb23-5" data-line-number="5">                               <span class="fl">23.029</span>, <span class="fl">23.597</span>, <span class="fl">23.584</span>, <span class="fl">25.525</span>, <span class="fl">27.731</span>, <span class="fl">29.449</span>))</a></code></pre></div>
+<p><em>Data sources: U.S. Office of Management and Budget and Centers for Disease Control &amp; Prevention</em></p>
+</section><section id="data---plot" class="slide level2">
+<h2>Data - Plot</h2>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-21-1.png" /><!-- --></p>
+</section><section id="frequentist-vs-bayesian" class="slide level2">
+<h2>Frequentist vs Bayesian</h2>
+<p><span class="math display">\[Y \sim ?\]</span></p>
+<ul>
+<li>Frequentist: ?</li>
+<li>Bayesian: ?</li>
+</ul>
+</section><section id="frequentist-vs-bayesian-1" class="slide level2">
+<h2>Frequentist vs Bayesian</h2>
+<p><span class="math display">\[Y \sim \mathcal N ( \beta_0 + \beta X,\sigma)\]</span></p>
+<ul>
+<li>Frequentist: Least Square</li>
+</ul>
+<p><span class="math display">\[min(\sum(\hat Y- Y))\]</span></p>
+<ul>
+<li>Bayesian: Likelihood</li>
+</ul>
+<p><span class="math display">\[max(P(\hat{Y}=Y))\]</span> <span class="math display">\[P(Y|(\beta_0,\beta, \sigma)) \sim \mathcal N(\hat{Y},\sigma)\]</span> <span class="math display">\[P(Y|(\beta_0,\beta, \sigma)) \sim \mathcal N(\beta_0 + \beta X,\sigma)\]</span></p>
+</section><section id="likelihood---explicit" class="slide level2">
+<h2>Likelihood - Explicit</h2>
+<p><span class="math display">\[P(Y|(\beta_0,\beta, \sigma)) \sim \mathcal N(\hat{Y},\sigma)\]</span> <span class="math display">\[P(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac12(\frac{x-\mu}{\sigma})^2}\]</span> <span class="math display">\[P(Y|(\beta_0,\beta, \sigma)) =  \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac12(\frac{Y-\hat Y}{\sigma})^2}\]</span> <span class="math display">\[\mathcal L(Y|(\beta_0,\beta, \sigma)) = \prod P(Y|(\beta_0,\beta))\]</span> <span class="math display">\[log \mathcal L(Y|(\beta_0,\beta, \sigma)) = \sum \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac12(\frac{Y-\hat Y}{\sigma})^2}\]</span> <span class="math display">\[log \mathcal L(Y|(\beta_0,\beta, \sigma)) = \sum \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac12(\frac{Y-\beta_0+\beta*X}{\sigma})^2}\]</span></p>
+</section></section>
+<section><section id="growth-model" class="title-slide slide level1"><h1>Growth model</h1></section><section id="model-form" class="slide level2">
+<h2>Model form ?</h2>
+<p><span class="math display">\[log(AGR_i+1) \sim \mathcal N (G_{max} * e^{-\frac12(\frac{log(\frac{DBH}{D_{opt}})}{K_s})^2}, \sigma)\]</span></p>
+</section><section id="model-form-1" class="slide level2">
+<h2>Model form</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">growth &lt;-<span class="st"> </span><span class="cf">function</span>(dbh, <span class="dt">Gmax =</span> <span class="fl">1.7</span>, <span class="dt">Dopt =</span> <span class="dv">30</span>, <span class="dt">Ks =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">  Gmax<span class="op">*</span><span class="kw">exp</span>(<span class="op">-</span><span class="fl">0.5</span><span class="op">*</span>(<span class="kw">log</span>(dbh<span class="op">/</span>Dopt)<span class="op">/</span>Ks)<span class="op">^</span><span class="dv">2</span>)</a></code></pre></div>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-23-1.png" /><!-- --></p>
+</section><section id="g_max-prior" class="slide level2">
+<h2><span class="math inline">\(G_{max}\)</span> prior</h2>
+<blockquote>
+<p><span class="math inline">\(G_{max} \sim \mathcal N ( \mu_G , \sigma_G)\)</span></p>
+</blockquote>
+</section><section id="g_max-posterior" class="slide level2">
+<h2><span class="math inline">\(G_{max}\)</span> posterior ?</h2>
+<blockquote>
+<p><span class="math inline">\(p(G_{max}|K_s, D_{opt}, \sigma) = ~?\)</span></p>
+</blockquote>
+</section><section id="g_max-posterior-1" class="slide level2">
+<h2><span class="math inline">\(G_{max}\)</span> posterior</h2>
+<p><span class="math display">\[p(G_{max}|K_s, D_{opt}, \sigma) = \prod_1^n \frac1{\sigma\sqrt {2\pi}} e^{-\frac12(\frac{Y-\hat Y}\sigma)^2}*\frac1{\sigma_G\sqrt{2\pi}}e^{-\frac12(\frac{G_{max}-\mu_G}\sigma)^2}\]</span> <span class="math display">\[f(DBH) = exp(-\frac12(\frac{log(\frac{DBH}{D_{opt}})}{K_s})^2\]</span> <span class="math display">\[p(G_{max}|K_s, D_{opt}, \sigma) = \prod_1^n \frac1{\sigma\sqrt {2\pi}} e^{-\frac12(\frac{Y-G_{max}*f(DBH)}\sigma)^2}*\frac1{\sigma_G\sqrt{2\pi}}e^{-\frac12(\frac{G_{max}-\mu_G}\sigma)^2}\]</span></p>
+</section><section id="g_max-posterior-2" class="slide level2">
+<h2><span class="math inline">\(G_{max}\)</span> posterior</h2>
+<p><span class="math display">\[p(G_{max}|K_s, D_{opt}, \sigma) = \prod_1^n \frac1{\sigma\sqrt {2\pi}} e^{-\frac12(\frac{Y-G_{max}*f(DBH)}\sigma)^2}*\frac1{\sigma_G\sqrt{2\pi}}e^{-\frac12(\frac{G_{max}-\mu_G}\sigma)^2}\]</span> <span class="math display">\[p(G_{max}|K_s, D_{opt}, \sigma) \sim \mathcal N( \frac{\sigma^2\sum_1^n f(DBH)Y+\frac{\mu_G}{\sigma_G^2}}{\sigma^2\sum_1^n f(DBH)^2+\frac{1}{\sigma_G^2}}, \frac{1}{\frac1{\sigma^2}\sum_1^n f(DBH)^2+\frac{1}{\sigma_G^2}})\]</span></p>
+</section></section>
+<section><section id="winbugs" class="title-slide slide level1"><h1>WinBUGS</h1></section><section id="bugs" class="slide level2">
+<h2>BUGS</h2>
+<blockquote>
+<p>Bayesian inference Using Gibbs Sampling</p>
+</blockquote>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># 1 - a model</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">model{ <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>N)</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">  y[i] ∼ <span class="kw">f</span>(x[i], parameters)</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">  ...</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">  parameters ∼ prior</a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7"><span class="co"># 2 - your data</span></a>
+<a class="sourceLine" id="cb25-8" data-line-number="8"><span class="kw">list</span>(<span class="dt">x=</span><span class="kw">c</span>(...), <span class="dt">y=</span><span class="kw">c</span>(...), <span class="dt">N =</span> ...)</a>
+<a class="sourceLine" id="cb25-9" data-line-number="9"><span class="co"># 3 - initial values</span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10"><span class="kw">list</span>(<span class="dt">parameters =</span> ...)</a></code></pre></div>
+</section><section id="dag" class="slide level2">
+<h2>DAG</h2>
+<ul>
+<li><strong>Directed Acyclic Graphs</strong>: Allow to build graphically a model (didactic)
+<ul>
+<li><strong>Node</strong>: <em>“variables”</em>
+<ul>
+<li><strong>stochastic</strong>: <em>“variables”</em> following a low</li>
+<li><strong>stochastic</strong>: <em>“variables”</em> resulting from an operation (i.e. <span class="math inline">\(\mu\)</span>)</li>
+<li><strong>constant</strong>: <em>“variables”</em> not varying (i.e. data)</li>
+</ul></li>
+<li><strong>Arrows</strong>: link between <em>“variables”</em>
+<ul>
+<li><strong>solid</strong>: stochastic dependence</li>
+<li><strong>hollow</strong>: logical function</li>
+</ul></li>
+<li><strong>Plates</strong>: define vector with data indices (i.e. <span class="math inline">\(X[i]\)</span>)</li>
+</ul></li>
+</ul>
+</section><section id="sience-and-suicides---dag" class="slide level2">
+<h2>Sience and Suicides - DAG ?</h2>
+<blockquote>
+<p><span class="math display">\[Y \sim \mathcal N ( \beta_0 + \beta X,\sigma)\]</span></p>
+</blockquote>
+<ul>
+<li>Doodle &gt; New…</li>
+<li>Click to create a new node in the model ;</li>
+<li>select a box and then “Ctrl” + click on the 2 box to create arrows (links between nodes)</li>
+<li>when you’re happy with your doodle, Doodle &gt; Write code… and the code corresponding to your model will appear in a new window.</li>
+</ul>
+</section><section id="sience-and-suicides---dag-1" class="slide level2">
+<h2>Sience and Suicides - DAG</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">include_graphics</span>(<span class="st">&quot;./data/DAGlm.png&quot;</span>)</a></code></pre></div>
+<p><img src="data/DAGlm.png" width="419" /></p>
+</section><section id="sience-and-suicides---model-1" class="slide level2">
+<h2>Sience and Suicides - Model 1</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">model;</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">{</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">   <span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span> <span class="op">:</span><span class="st"> </span><span class="dv">11</span> ) {</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">      Y[i] <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(mu[i],tau)</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">   }</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">   tau <span class="op">~</span><span class="st"> </span><span class="kw">dgamma</span>(<span class="fl">0.001</span>,<span class="fl">0.001</span>)</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7">   beta_<span class="dv">0</span> <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>( <span class="fl">0.0</span>,<span class="fl">1.0E-6</span>)</a>
+<a class="sourceLine" id="cb27-8" data-line-number="8">   beta <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>( <span class="fl">0.0</span>,<span class="fl">1.0E-6</span>)</a>
+<a class="sourceLine" id="cb27-9" data-line-number="9">   <span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span> <span class="op">:</span><span class="st"> </span><span class="dv">11</span> ) {</a>
+<a class="sourceLine" id="cb27-10" data-line-number="10">      mu[i] &lt;-<span class="st"> </span>beta <span class="op">*</span><span class="st"> </span>X[i] <span class="op">+</span><span class="st"> </span>beta_<span class="dv">0</span></a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">   }</a>
+<a class="sourceLine" id="cb27-12" data-line-number="12">}</a></code></pre></div>
+</section><section id="sience-and-suicides---model-2" class="slide level2">
+<h2>Sience and Suicides - Model 2</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># Model</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">model;</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">{</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">   <span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span> <span class="op">:</span><span class="st"> </span><span class="dv">11</span> ) {</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">      mu[i] &lt;-<span class="st"> </span>beta <span class="op">*</span><span class="st"> </span>X[i] <span class="op">+</span><span class="st"> </span>beta_<span class="dv">0</span></a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">      Y[i] <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(mu[i],tau)</a>
+<a class="sourceLine" id="cb28-7" data-line-number="7">   }</a>
+<a class="sourceLine" id="cb28-8" data-line-number="8">   tau <span class="op">~</span><span class="st"> </span><span class="kw">dgamma</span>(<span class="fl">0.001</span>,<span class="fl">0.001</span>)</a>
+<a class="sourceLine" id="cb28-9" data-line-number="9">   beta_<span class="dv">0</span> <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>( <span class="fl">0.0</span>,<span class="fl">1.0E-6</span>)</a>
+<a class="sourceLine" id="cb28-10" data-line-number="10">   beta <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>( <span class="fl">0.0</span>,<span class="fl">1.0E-6</span>)</a>
+<a class="sourceLine" id="cb28-11" data-line-number="11">}</a></code></pre></div>
+</section><section id="sience-and-suicides---inference" class="slide level2">
+<h2>Sience and Suicides - Inference</h2>
+<ul>
+<li>Model &gt; Specification…</li>
+<li>double click on the word “model” (in your script) and then “check model” (in specification tool)</li>
+<li>upload data from a text file : File &gt; Open…</li>
+<li>write it as a list : list(X = c(…), Y = c(…))</li>
+<li>double click on the word “list” and click on “load data” (in specification tool)</li>
+<li>“Compile” (in specification tool)</li>
+<li>write a set of initial parameters values : list( tau = …, beta_0 = …, beta = …)</li>
+<li>double click on the word “list”</li>
+</ul>
+</section><section id="sience-and-suicides---data" class="slide level2">
+<h2>Sience and Suicides - Data</h2>
+<blockquote>
+<p>US spending on science, space, and technology vs Suicides by hanging, strangulation and suffocation</p>
+</blockquote>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">year =</span> <span class="dv">1999</span><span class="op">:</span><span class="dv">2009</span>,</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">                   <span class="dt">suicide =</span> <span class="kw">c</span>(<span class="dv">5247</span>, <span class="dv">5688</span>, <span class="dv">6198</span>, <span class="dv">6462</span>, <span class="dv">6635</span>, <span class="dv">7336</span>, <span class="dv">7248</span>, </a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">                               <span class="dv">7491</span>, <span class="dv">8161</span>, <span class="dv">8578</span>, <span class="dv">9000</span>),</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">                   <span class="dt">science =</span> <span class="kw">c</span>(<span class="fl">18.079</span>, <span class="fl">18.594</span>, <span class="fl">19.753</span>, <span class="fl">20.734</span>, <span class="fl">20.831</span>, </a>
+<a class="sourceLine" id="cb29-5" data-line-number="5">                               <span class="fl">23.029</span>, <span class="fl">23.597</span>, <span class="fl">23.584</span>, <span class="fl">25.525</span>, <span class="fl">27.731</span>, <span class="fl">29.449</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co"># Data</span></a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="kw">list</span>(<span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">5247</span>, <span class="dv">5688</span>, <span class="dv">6198</span>, <span class="dv">6462</span>, <span class="dv">6635</span>, <span class="dv">7336</span>, <span class="dv">7248</span>, <span class="dv">7491</span>, <span class="dv">8161</span>, <span class="dv">8578</span>, <span class="dv">9000</span>), <span class="dt">X =</span> <span class="kw">c</span>(<span class="fl">18.079</span>, <span class="fl">18.594</span>, <span class="fl">19.753</span>, <span class="fl">20.734</span>, <span class="fl">20.831</span>, <span class="fl">23.029</span>, <span class="fl">23.597</span>, <span class="fl">23.584</span>, <span class="fl">25.525</span>, <span class="fl">27.731</span>, <span class="fl">29.449</span>))</a></code></pre></div>
+</section><section id="sience-and-suicides---inits" class="slide level2">
+<h2>Sience and Suicides - Inits</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># Inits</span></a>
+<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="kw">list</span>(<span class="dt">tau =</span> <span class="dv">1</span>, <span class="dt">beta_0=</span><span class="dv">0</span>, <span class="dt">beta=</span><span class="dv">100</span>)</a></code></pre></div>
+</section><section id="sience-and-suicides---inference-1" class="slide level2">
+<h2>Sience and Suicides - Inference</h2>
+<ol type="1">
+<li>Inference &gt; Samples…</li>
+<li>Write nodes (parameters of interest) and “Set”</li>
+<li>Model &gt; Update &gt; updates (sets number of iterations) : write a sufficiently large number (eg 10000)</li>
+<li>Click on “update” to run the MCMC</li>
+<li>Back to Sample Monitor Tool : choose node to watch and check density (histogram of values taken after the burning period), history (chain of values, stats…)</li>
+</ol>
+</section><section id="sience-and-suicides---result" class="slide level2">
+<h2>Sience and Suicides - Result</h2>
+<p><span class="math inline">\(\tau = 2.88*10^-5,~\beta_0 = -154.7, ~\beta = 317.8\)</span></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">include_graphics</span>(<span class="st">&quot;./data/WINBUGSResult.png&quot;</span>)</a></code></pre></div>
+<p><img src="data/WINBUGSResult.png" width="620" /></p>
+</section><section id="r2winbugs---packages" class="slide level2">
+<h2>R2WinBUGS - Packages</h2>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw">library</span>(R2WinBUGS)</a></code></pre></div>
+<pre><code>## Loading required package: coda</code></pre>
+<pre><code>## Loading required package: boot</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">library</span>(coda)</a></code></pre></div>
+</section><section id="r2winbugs---inference" class="slide level2">
+<h2>R2WinBUGS - Inference</h2>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">model &lt;-<span class="st"> &quot;./data/model.txt&quot;</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">data &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">5247</span>, <span class="dv">5688</span>, <span class="dv">6198</span>, <span class="dv">6462</span>, <span class="dv">6635</span>, <span class="dv">7336</span>, <span class="dv">7248</span>, <span class="dv">7491</span>, <span class="dv">8161</span>, <span class="dv">8578</span>, <span class="dv">9000</span>), <span class="dt">X =</span> <span class="kw">c</span>(<span class="fl">18.079</span>, <span class="fl">18.594</span>, <span class="fl">19.753</span>, <span class="fl">20.734</span>, <span class="fl">20.831</span>, <span class="fl">23.029</span>, <span class="fl">23.597</span>, <span class="fl">23.584</span>, <span class="fl">25.525</span>, <span class="fl">27.731</span>, <span class="fl">29.449</span>))</a>
+<a class="sourceLine" id="cb37-3" data-line-number="3">inits &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">tau =</span> <span class="dv">1</span>, <span class="dt">beta_0=</span><span class="dv">0</span>, <span class="dt">beta=</span><span class="dv">100</span>))</a>
+<a class="sourceLine" id="cb37-4" data-line-number="4">Niter &lt;-<span class="st"> </span><span class="fl">6e3</span></a>
+<a class="sourceLine" id="cb37-5" data-line-number="5">Nburning &lt;-<span class="st"> </span><span class="kw">ceiling</span>(Niter<span class="op">/</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb37-6" data-line-number="6">Nthin &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb37-7" data-line-number="7">parameters &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;beta_0&#39;</span>,<span class="st">&#39;beta&#39;</span>,<span class="st">&#39;tau&#39;</span>)</a>
+<a class="sourceLine" id="cb37-8" data-line-number="8">resu.bugs &lt;-<span class="st"> </span><span class="kw">bugs</span>(data, inits, parameters, model,</a>
+<a class="sourceLine" id="cb37-9" data-line-number="9">                  <span class="dt">n.chains =</span> <span class="dv">1</span>, <span class="dt">n.iter =</span> Niter, <span class="dt">n.burnin =</span> Nburning,</a>
+<a class="sourceLine" id="cb37-10" data-line-number="10">                  <span class="dt">bugs.directory =</span> <span class="st">&quot;./documents/Initiation Bayes et WinBugs/Winbugs/WinBUGS14/&quot;</span>,</a>
+<a class="sourceLine" id="cb37-11" data-line-number="11">                  <span class="dt">working.directory =</span> <span class="kw">getwd</span>())</a>
+<a class="sourceLine" id="cb37-12" data-line-number="12">codaobj &lt;-<span class="st"> </span><span class="kw">read.bugs</span>(<span class="st">&#39;coda1.txt&#39;</span>)</a></code></pre></div>
+<pre><code>## Abstracting beta ... 1000 valid values
+## Abstracting beta_0 ... 1000 valid values
+## Abstracting deviance ... 1000 valid values
+## Abstracting tau ... 1000 valid values</code></pre>
+</section><section id="r2winbugs---results" class="slide level2">
+<h2>R2WinBUGS - Results</h2>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="kw">print</span>(resu.bugs)</a></code></pre></div>
+<pre><code>## Inference for Bugs model at &quot;./data/model.txt&quot;, fit using WinBUGS,
+##  1 chains, each with 6000 iterations (first 3000 discarded), n.thin = 3
+##  n.sims = 1000 iterations saved
+##            mean    sd   2.5%    25%    50%   75% 97.5%
+## beta_0   -152.5 370.1 -874.4 -386.3 -159.1  87.1 593.6
+## beta      317.6  16.1  286.2  307.2  318.1 328.1 348.6
+## tau         0.0   0.0    0.0    0.0    0.0   0.0   0.0
+## deviance  147.1   2.4  144.2  145.3  146.4 148.2 153.4
+## 
+## DIC info (using the rule, pD = Dbar-Dhat)
+## pD = 3.0 and DIC = 150.0
+## DIC is an estimate of expected predictive error (lower deviance is better).</code></pre>
+</section><section id="r2winbugs---results-1" class="slide level2">
+<h2>R2WinBUGS - Results</h2>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="kw">plot</span>(resu.bugs)</a></code></pre></div>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-35-1.png" /><!-- --></p>
+</section><section id="r2winbugs---results-2" class="slide level2">
+<h2>R2WinBUGS - Results</h2>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="kw">plot</span>(codaobj)</a></code></pre></div>
+<p><img data-src="lecture_files/figure-revealjs/unnamed-chunk-36-1.png" /><!-- --></p>
+</section></section>
+<section><section id="conclusion" class="title-slide slide level1"><h1>Conclusion</h1></section><section id="bayes-theorem-2" class="slide level2">
+<h2>Bayes theorem</h2>
+<p><span class="math display">\[p(\theta|y) = \frac{p(\theta)*p(y|\theta)}{p(y)}\]</span></p>
+<p><span class="math display">\[p(hypothesis|data) \propto p(hypotheses)*p(data|hypothesis)\]</span></p>
+<p><span class="math display">\[posterior \propto prior*likelihood\]</span></p>
+</section><section id="model-choice" class="slide level2">
+<h2>Model choice</h2>
+<ul>
+<li>Prior, laws, and model forms knowledge</li>
+<li>Fitting techniques and tricks
+<ul>
+<li>center, reduce, bound, link…</li>
+</ul></li>
+<li><strong>Try and compare</strong>
+<ul>
+<li>convergence, parameters number, likelihood, prediction quality</li>
+<li>e.g. <span class="math inline">\(\hat{R}\)</span>, <span class="math inline">\(K\)</span>, <span class="math inline">\(log(\mathcal{L})\)</span>, <span class="math inline">\(RMSEP\)</span>…</li>
+</ul></li>
+</ul>
+</section><section id="other-tools---stan" class="slide level2">
+<h2>Other tools - <code>stan</code></h2>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="kw">include_graphics</span>(<span class="st">&quot;http://mc-stan.org/assets/img/shinystan/explore.png&quot;</span>)</a></code></pre></div>
+<p><img data-src="http://mc-stan.org/assets/img/shinystan/explore.png" /><!-- --></p>
+</section><section id="other-tools---greta" class="slide level2">
+<h2>Other tools - <code>greta</code></h2>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="kw">include_graphics</span>(<span class="st">&quot;https://rviews.rstudio.com/post/2018-04-11-Rickert-Greta_files/mod.png&quot;</span>)</a></code></pre></div>
+<p><img data-src="https://rviews.rstudio.com/post/2018-04-11-Rickert-Greta_files/mod.png" /><!-- --></p>
+</section><section id="references" class="slide level2">
+<h2>References</h2>
+<ul>
+<li>WinBUGS help</li>
+<li><a href="https://www.youtube.com/watch?v=t7lngTuC22Q">WinBUGS youtube tutorial</a></li>
+<li><a href="http://m-clark.github.io/workshops/bayesian/index.html#home">Michael Clark blog</a> <em>Become a bayesian with R &amp; stan</em></li>
+<li><a href="mc-stan.org/"><code>stan</code> website</a></li>
+<li><a href="https://greta-dev.github.io/greta/index.html"><code>greta</code> website</a></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="lecture_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="lecture_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lecture_files/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
