@@ -24,8 +24,8 @@ date_format = "Jan 2006"
   company_url = ""
   location = "Kourou, French Guiana"
   date_start = "2020-02-08"
-  date_end = "ongoing"
-  # description = "Genomics, Mutation, and Tropical forests"
+  date_end = "2022-07-31"
+  description = "Genomics, Mutation, and Tropical forests"
   
 [[experience]]
   title = "PhD student: Ecological genomics of niche exploitation and individual performance intropical forest trees"
