@@ -19,10 +19,19 @@ date_format = "Jan 2006"
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 
 [[experience]]
-  title = "PhD student: Ecological genomics of niche exploitation and individual performance intropical forest trees"
-  company = "UMRs Biodiversité Gènes et Communautés (BIOGECO) andÉcologie des FOrêts Guyanaise (ECOFOG)"
+  title = "Postdoctoral researcher: Mutation in the tropical tree canopy (TREEMUTATION)"
+  company = "UMR Écologie des FOrêts Guyanaise (ECOFOG)"
   company_url = ""
-  location = "Bordeaux/Kourou, France"
+  location = "Kourou, French Guiana"
+  date_start = "2020-02-08"
+  date_end = "ongoing"
+  # description = "Genomics, Mutation, and Tropical forests"
+  
+[[experience]]
+  title = "PhD student: Ecological genomics of niche exploitation and individual performance intropical forest trees"
+  company = "UMR Biodiversité Gènes et Communautés (BIOGECO)"
+  company_url = ""
+  location = "Bordeaux, France"
   date_start = "2017-09-01"
   date_end = "2020-12-31"
   description = "Ecological genomics, Functional ecology, and community ecology"

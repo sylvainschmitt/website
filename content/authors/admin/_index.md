@@ -10,15 +10,15 @@ authors:
 superuser: true
 
 # Role/position
-role: PhD student in Ecology and Evolution
+role: Postdoctoral researcher in Ecology and Evolution
 
 # Organizations/Affiliations
 organizations:
-- name: Univ. Bordeaux, INRAE, BIOGECO
-  url: "https://www6.bordeaux-aquitaine.inrae.fr/biogeco"
+- name: CNRS, ECOFOG
+  url: "https://www.ecofog.gf/"
 
 # Short bio (displayed in user profile at end of posts)
-bio: I am a PhD student in evolution and ecology working on tropical trees.
+bio: I am a Postdoctoral researcher in evolution and ecology working on tropical trees.
 
 interests:
 - Ecology
@@ -27,6 +27,9 @@ interests:
 
 education:
   courses:
+  - course: PhD in Ecology and Evolution
+    institution: Univ. Bordeaux
+    year: 2020
   - course: Msc / Engineer in Biodiversity, Ecology and Evolution
     institution: AgroParisTech, Univ. Montpellier
     year: 2017
@@ -71,5 +74,4 @@ highlight_name: true
 # - Visitors
 ---
 
-I am a PhD student in evolution and ecology working on tropical trees. More especially, the main objective of my PhD thesis is to further explore the genotype-environment interactions in shaping the intraspecific trait variability of tropical tree species, and derive its impact on the origin and maintenance of biodiversity.
-
+I am a postdoctoral researcher in evolution and ecology working on tropical trees. I did my PhD thesis on genotype-environment interactions in the formation of intraspecific trait variability in tropical tree species, and deduced the impact on the origin and maintenance of biodiversity. I am currently involved in the TreeMutation project which focuses on mutation in the canopy of tropical trees.
