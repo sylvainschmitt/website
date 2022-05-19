@@ -39,24 +39,27 @@ education:
 #   For an email link, use "fas" icon pack, "envelope" icon, and a link in the
 #   form "mailto:your-email@example.com" or "#contact" for contact widget.
 social:
-- icon: envelope
-  icon_pack: fas
-  link: '#contact'  # For a direct email link, use "mailto:sylvain.m.schmitt@gmail.com".
+- icon: researchgate
+  icon_pack: ai
+  link: https://www.researchgate.net/profile/Sylvain-Schmitt
 - icon: google-scholar
   icon_pack: ai
   link: https://scholar.google.com/citations?user=sM0Z2yIAAAAJ&hl=fr
-- icon: publons
-  icon_pack: ai
-  link: https://publons.com/researcher/3675037/sylvain-schmitt/
 - icon: github
   icon_pack: fab
   link: https://github.com/sylvainschmitt
-- icon: google-scholar
+- icon: publons
   icon_pack: ai
-  link: https://scholar.google.com/citations?user=4iLBmbUAAAAJ
+  link: https://publons.com/researcher/3675037/sylvain-schmitt/
+- icon: orcid
+  icon_pack: ai
+  link: https://orcid.org/0000-0001-7759-7106
 - icon: cv
   icon_pack: ai
   link: files/cv.pdf
+- icon: envelope
+  icon_pack: fas
+  link: 'mailto:sylvain.m.schmitt@gmail.com'  # For a direct email link, use "mailto:sylvain.m.schmitt@gmail.com".
 # Link to a PDF of your resume/CV from the About widget.
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
 
@@ -74,4 +77,4 @@ highlight_name: true
 # - Visitors
 ---
 
-I am a postdoctoral researcher in evolution and ecology working on tropical trees. I did my PhD thesis on genotype-environment interactions in the formation of intraspecific trait variability in tropical tree species, and deduced the impact on the origin and maintenance of biodiversity. I am currently involved in the TreeMutation project which focuses on mutation in the canopy of tropical trees.
+I'm a postdoctoral researcher in tropical tree ecology and evolution. I did a PhD on genotype-environment interactions in shaping intraspecific variability in tropical tree species, and explored its impact on the origin and maintenance of biodiversity. I am currently involved in the TreeMutation project which focuses on mutations in the canopy of tropical trees.

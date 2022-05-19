@@ -93,11 +93,11 @@ phone = ""
 
 # Address
 # For country_code, use the 2-letter ISO code (see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 )
-address = {street = "69 route d'Arcachon", city = "Cestas", region = "", postcode = "33610", country = "France", country_code = "FR"}
+address = {street = "Campus Agronomique", city = "Kourou", region = "", postcode = "97310", country = "French Guiana", country_code = "FR"}
 
 # Geographic coordinates
 # To get your coordinates, right-click on Google Maps and choose "What's here?". The coords will show up at the bottom.
-coordinates = {latitude = "44.740600", longitude = "-0.766872"}
+coordinates = {latitude = "5.17921", longitude = "-52.65203"}
 
 # Directions for visitors to locate you.
 directions = ""
@@ -262,7 +262,7 @@ plugins_js  = []
   #   1: Google Maps
   #   2: OpenStreetMap (Mapnik)
   #   3: OpenStreetMap (Mapbox)
-  engine = 2
+  engine = 3
   api_key = ""
   zoom = 15
 
@@ -284,4 +284,4 @@ plugins_js  = []
 ## Icon Pack Extensions
 ############################
 [icon.pack]
-  ai = false  # Academicons icon pack https://jpswalsh.github.io/academicons/
+  ai = true  # Academicons icon pack https://jpswalsh.github.io/academicons/

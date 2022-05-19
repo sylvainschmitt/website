@@ -4,9 +4,9 @@
 title: "SSDM"
 subtitle: "Stacked Species Distribution Modelling"
 summary: ""
-authors: ""
+authors: ["Sylvain Schmitt", "Robin Pouteau", "Dimitri Justeau", "Florian de Boissieu", "Lukas Baum-bach", "Philippe Birnbaum"]
 tags: []
-categories: ["Sylvain Schmitt", "Robin Pouteau", "Dimitri Justeau", "Florian de Boissieu", "Lukas Baum-bach", "Philippe Birnbaum"]
+categories: "
 date: 2020-02-28
 lastmod: 2020-02-28
 featured: false
