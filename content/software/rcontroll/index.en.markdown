@@ -4,7 +4,7 @@
 title: "rcontroll"
 subtitle: "individual-based forest growth simulator TROLL"
 summary: ""
-authors: ["Sylvain Schmitt", "Robin Pouteau", "Dimitri Justeau", "Florian de Boissieu", "Lukas Baum-bach", "Philippe Birnbaum"]
+authors: ["Sylvain Schmitt", "Guillaume Salzet", "Fabian Fischer", "Isabelle Maréchaux", "Jérôme Chave"]
 tags: []
 categories: []
 date: 2020-02-28
@@ -28,20 +28,72 @@ image:
 # projects: []
 
 url_code: "https://github.com/sylvainschmitt/rcontroll/"
-url_website: "https://sylvainschmitt.github.io/rcontroll/"
+url_project: "https://sylvainschmitt.github.io/rcontroll/"
 ---
 
 *rcontroll* integrates the individual-based  and spatially-explicit *TROLL* model to simulate forest ecosystem and species dynamics forward in time.
 *rcontroll* provides user-friendly functions to set up and analyse simulations with varying community compositions, ecological parameters, and climate conditions.
 
-The *TROLL* simulator relies on a complex system of equations coded in C++ to efficiently simulate hundreds of individuals over hundreds of years.
-In contrast, the *rcontroll* package relies on a few functions in R to generate and provide inputs, prepare and run the simulations, and analyse the simulations through tables, figures, and maps that are easily connected to the rest of the R package ecosystem. 
-The whole workflow can even be run for one or several simulations using a unique function (`troll` and `stack` functions). 
-Pre-simulations functions include global parameters definition (`generate_parameters` function) and species and weather data input, with default values for French Guiana included in the package.
-Simulations are run alone (`troll` function) or as a stack (`stack` function) and stocked in corresponding `trollsim` or `trollstack`  classes.
-The post-simulation outputs are stored in the corresponding `trollsim` or `trollstack` objects and can be accessed using object attributes (with `@` in R) in the form of simple R objects, mainly data frames, or summarised and plotted with the `print`, `summary` and `autoplot` methods. 
-TROLL simulation or stack objects consist of 7 attributes: (1) simulation name, (2) path to saved files, (3) simulation parameters, (4) simulation log, (5) initial and final simulation forest, (6) ecosystem metrics, and (7) species metrics.
-The initial and final forest of the simulation is a table containing spatialized inventories describing the individual states at the beginning and end of the simulation.
-The ecosystem and species metrics are two tables summarising overall and species forest trajectories with several variables, including for example net primary productivity and aboveground biomass. 
-Simulations can be saved using a user-defined path when run and later loaded as a simple simulation (`load_output` function) or a stack of simulations (`load_stack` function). 
-Finally, rcontroll includes a function to visualise TROLL simulations as an animated figure (`autogif` function) to better understand, demonstrate or teach the functioning of the TROLL model.
+## Description
+
+`TROLL` is coded in C++ and it typically simulates hundreds of thousands of individuals over hundreds of years. 
+The `rcontroll` R package is a wrapper of `TROLL`. 
+`rcontroll` includes functions that generate inputs for simulations and run simulations. 
+Finally, it is possible to analyse the `TROLL` outputs through tables, figures, 
+and maps taking advantage of other R visualisation packages. 
+`rcontroll` also offers the possibility to generate a virtual LIDAR point cloud 
+that corresponds to a snapshot of the simulated forest.
+
+### Construction and manipulation of input files
+
+As stated above, three types of input data are needed for a typical `TROLL` simulation: 
+(i) climate data, (ii) plant functional traits, (iii) global model parameters.
+Pre-simulation functions include global parameters definition (`generate_parameters` function) and climate data generation (`generate_climate` function). 
+`rcontroll` also includes default data for species and climate inputs for a typical French Guiana rainforest site. 
+The purpose of the `generate_climate` function with the help of the corresponding vignette is to create `TROLL` climate inputs from ERA5-Land (Muñoz-Sabater et al. 2021), 
+a global climatic reanalysis dataset that is freely available. 
+The ERA5-Land climate reanalysis is available at 9 km spatial resolution and hourly temporal resolution since 1950, 
+and daily or monthly means are available and their uncertainties reported. 
+Therefore, `rcontroll` users only need to input the species-specific trait data to run `TROLL` simulations, irrespective of the site. 
+`TROLL` was originally developed for tropical and subtropical forests, so certain assumptions must be critically examined when applying it outside the tropics. 
+The input files can be used to start a `TROLL` simulation run within the `rcontroll` environment (see below), 
+or saved so that the `TROLL` simulation can be started as a command line tool.
+
+### Simulations
+
+The default option is to run a `TROLL` simulation using the `troll` function of the rcontroll package, 
+which currently calls version 3.1.7 of `TROLL` using the Rcpp package (Eddelbuettel & François 2011). 
+The output is stored in a `trollsim` R class. 
+For multiple runs, users can rely on the `stack` function, and the output is stored in the `trollstack` class.
+Both `trollsim` and `trollstack` values can be accessed using object attributes in the form of simple R objects (with `@` in R).
+They consist of eight simulation attributes: (1) name, (2) path to saved files, (3) parameters, (4) inputs, (5) log, 
+(6) initial and final state, (7) ecosystem output metrics, and (8) species output metrics. 
+The initial and final states are represented by a table with the spatial position,
+size and other relevant traits of all trees at the start and end of the simulation.
+The ecosystem and species metrics are summaries of ecosystem processes and states, 
+such as net primary production and aboveground biomass, and they are documented at species level and aggregated over the entire stand. Simulations can be saved using a user-defined path when run and later loaded as a simple simulation (`load_output` function) 
+or a stack of simulations (`load_stack` function).
+
+### Simulated airborne lidar scanning option
+
+`TROLL` also has the capacity of generating point clouds from virtual aerial lidar scannings of simulated forest scenes.
+Within each cubic metre voxel of the simulated stand, points are generated probabilistically, 
+with the probability depending both on the amount of light reaching the particular voxel 
+and the amount of leaf matter intercepting light within the voxel. 
+Extinction and interception of light are based on the Beer-Lambert law, 
+but an effective extinction factor is used to account for differences between the near-infrared and visible light. 
+The definition of the lidar parameters (`generate_lidar` function) is optional but allows the user to add a virtual aerial lidar scan for a time step of the `TROLL` simulation. 
+When this option is enabled, the cloud of points from simulated aerial lidar scans are stored as LAS using the R package `lidR` (Roussel et al., 2020) as a ninth attribute of the `trollsim` and `trollstack` objects. 
+
+### Manipulation of simulation outputs
+
+`rcontroll` includes functions to manipulate simulation outputs. 
+Simulation outputs can be retrieved directly from the `trollsim` or `trollstack`objects 
+and summarised or plotted in the R environment with the `print`, `summary` and `autoplot` functions. 
+The `get_chm` function allows users to retrieve canopy height models from aerial lidar point clouds (Fig. 2). 
+In addition, a `rcontroll` function is available to visualise TROLL simulations as an animated figure (`autogif` function, Fig. 1).
+
+![*Figure 1: Output from a TROLL simulation using the autogif function in the rcontroll package. The image shows a vertical cut in the forest structure along the X-axis (in metre) with individual tree height (metre) on the Y-axis. The tree colours indicate the identity of the species and can be changed using the ggplot2 grammar. The figure shows the forest structure dynamically over 200 years of a successional trajectory starting from bare ground.*](https://raw.githubusercontent.com/sylvainschmitt/rcontroll/main/inst/figures/troll.gif)
+
+![*Figure 2: Cloud of points obtained through a virtual airborne lidar scan of a forest scene simulated with TROLL. The horizontal axes represent the X-axis and Y-axis (in metres) and the vertical axis represents height (in metres). The thermal colour scale indicates the height of the points in the cloud, from 0 m in dark blue to 40 m in red.*](https://raw.githubusercontent.com/sylvainschmitt/rcontroll/main/inst/figures/lidar.png)
+

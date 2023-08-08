@@ -93,11 +93,11 @@ phone = ""
 
 # Address
 # For country_code, use the 2-letter ISO code (see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 )
-address = {street = "Campus Agronomique", city = "Kourou", region = "", postcode = "97310", country = "French Guiana", country_code = "FR"}
+address = {street = "Cirad Baillarguet", city = "Montferrier-sur-Lez", region = "", postcode = "34980", country = "France", country_code = "FR"}
 
 # Geographic coordinates
 # To get your coordinates, right-click on Google Maps and choose "What's here?". The coords will show up at the bottom.
-coordinates = {latitude = "5.17921", longitude = "-52.65203"}
+coordinates = {latitude = "43.68487764937953", longitude = "3.876879623273597"}
 
 # Directions for visitors to locate you.
 directions = ""
@@ -262,7 +262,7 @@ plugins_js  = []
   #   1: Google Maps
   #   2: OpenStreetMap (Mapnik)
   #   3: OpenStreetMap (Mapbox)
-  engine = 3
+  engine = 2
   api_key = ""
   zoom = 15
 

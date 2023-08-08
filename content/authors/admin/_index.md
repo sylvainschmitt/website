@@ -10,20 +10,22 @@ authors:
 superuser: true
 
 # Role/position
-role: Postdoctoral researcher in Ecology and Evolution
+role: Researcher in Ecology and Climate Change
 
 # Organizations/Affiliations
 organizations:
-- name: CNRS, ECOFOG
-  url: "https://www.ecofog.gf/"
+- name: CIRAD, Forêts & Sociétés
+  url: "https://ur-forets-societes.cirad.fr/"
 
 # Short bio (displayed in user profile at end of posts)
 bio: I am a Postdoctoral researcher in evolution and ecology working on tropical trees.
 
 interests:
+- Tropical forests
 - Ecology
+- Climate Change
+- Tool development
 - Evolutionary biology
-- Bioinformatics
 
 education:
   courses:
@@ -39,9 +41,6 @@ education:
 #   For an email link, use "fas" icon pack, "envelope" icon, and a link in the
 #   form "mailto:your-email@example.com" or "#contact" for contact widget.
 social:
-- icon: researchgate
-  icon_pack: ai
-  link: https://www.researchgate.net/profile/Sylvain-Schmitt
 - icon: google-scholar
   icon_pack: ai
   link: https://scholar.google.com/citations?user=sM0Z2yIAAAAJ&hl=fr
@@ -60,6 +59,9 @@ social:
 - icon: envelope
   icon_pack: fas
   link: 'mailto:sylvain.m.schmitt@gmail.com'  # For a direct email link, use "mailto:sylvain.m.schmitt@gmail.com".
+- icon: researchgate
+  icon_pack: ai
+  link: https://www.researchgate.net/profile/Sylvain-Schmitt
 # Link to a PDF of your resume/CV from the About widget.
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
 
@@ -77,4 +79,8 @@ highlight_name: true
 # - Visitors
 ---
 
-I'm a postdoctoral researcher in tropical tree ecology and evolution. I did a PhD on genotype-environment interactions in shaping intraspecific variability in tropical tree species, and explored its impact on the origin and maintenance of biodiversity. I am currently involved in the TreeMutation project which focuses on mutations in the canopy of tropical trees.
+I'm Sylvain, soon to be an ecologist at CIRAD (https://www.cirad.fr), 
+a French research center working with 
+developing countries on environmental and development issues. 
+I am currently conducting research into modeling the joint effect of climate 
+change and anthropogenic disturbance on the dynamics of Amazonian tropical forests. 

@@ -19,18 +19,36 @@ date_format = "Jan 2006"
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 
 [[experience]]
+  title = "Researcher: Tropical forest Ecology and Cliamte Change"
+  company = "UR Forêts et sociétés (F&S)"
+  company_url = "https://ur-forets-societes.cirad.fr/"
+  location = "Montpellier, France"
+  date_start = "2023-09-01"
+  date_end = ""
+  description = "Climate Change, Ecology, and Tropical forests"
+
+[[experience]]
+  title = "Postdoctoral researcher: Tropical forest modelling with joint effect of climate change and anthropic disturbances (ALT)"
+  company = "UMR botAnique et Modélisation de l'Architecture des Plantes et des végétations (AMAP)"
+  company_url = "https://amap.cirad.fr"
+  location = "Montpellier, France"
+  date_start = "2023-08-31"
+  date_end = "2023-03-01"
+  description = "Climate Change, Dynamic Vegetation Model, and Tropical forests"
+
+[[experience]]
   title = "Postdoctoral researcher: Mutation in the tropical tree canopy (TREEMUTATION)"
   company = "UMR Écologie des FOrêts Guyanaise (ECOFOG)"
-  company_url = ""
+  company_url = "https://www.ecofog.gf/"
   location = "Kourou, French Guiana"
   date_start = "2020-02-08"
-  date_end = "2022-07-31"
+  date_end = "2023-02-28"
   description = "Genomics, Mutation, and Tropical forests"
   
 [[experience]]
   title = "PhD student: Ecological genomics of niche exploitation and individual performance intropical forest trees"
   company = "UMR Biodiversité Gènes et Communautés (BIOGECO)"
-  company_url = ""
+  company_url = "https://www6.bordeaux-aquitaine.inrae.fr/biogeco"
   location = "Bordeaux, France"
   date_start = "2017-09-01"
   date_end = "2020-12-31"
@@ -39,7 +57,7 @@ date_format = "Jan 2006"
 # [[experience]]
 #   title = "Research internship: Biodiversity and resilience of tropical forest ecosystem after disturbance"
 #   company = "UMR Écologie des FOrêts Guyanaise (ECOFOG)"
-#   company_url = ""
+#   company_url = "https://www.ecofog.gf/"
 #   location = "Kourou, French Guiana"
 #   date_start = "2017-02-02"
 #   date_end = "2017-08-02"
@@ -62,14 +80,5 @@ date_format = "Jan 2006"
 #   date_start = "2015-09-15"
 #   date_end = "2016-02-15"
 #   description = "Modelling, statistics, ecology, botany and R development"
-#   
-# [[experience]]
-#   title = "Research internship in soil ecology"
-#   company = "Helmoltz Zentrum"
-#   company_url = ""
-#   location = "Muncih, Germany"
-#   date_start = "2015-07-01"
-#   date_end = "2015-08-30"
-#   description = "Statistics, functional ecology and scientific writing"
   
 +++

@@ -4,6 +4,7 @@
 # Hugo
 /resources/
 .Rproj.user
+public
 
 #
 \\.knit\\.md$
