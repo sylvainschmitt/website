@@ -19,7 +19,7 @@ date_format = "Jan 2006"
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 
 [[experience]]
-  title = "Researcher: Tropical forest Ecology and Cliamte Change"
+  title = "Researcher: Tropical forest Ecology and Climate Change"
   company = "UR Forêts et sociétés (F&S)"
   company_url = "https://ur-forets-societes.cirad.fr/"
   location = "Montpellier, France"

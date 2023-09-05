@@ -18,7 +18,7 @@ organizations:
   url: "https://ur-forets-societes.cirad.fr/"
 
 # Short bio (displayed in user profile at end of posts)
-bio: I am a Postdoctoral researcher in evolution and ecology working on tropical trees.
+bio: Researcher in Ecology and Climate Change for tropical forests.
 
 interests:
 - Tropical forests
@@ -79,7 +79,7 @@ highlight_name: true
 # - Visitors
 ---
 
-I'm Sylvain, soon to be an ecologist at CIRAD (https://www.cirad.fr), 
+I'm Sylvain, an ecologist at CIRAD (https://www.cirad.fr), 
 a French research center working with 
 developing countries on environmental and development issues. 
 I am currently conducting research into modeling the joint effect of climate 
